@@ -3,43 +3,42 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>Weather App</title>
   </head>
   <body>
     <main>
-      <h1>Find out how the weather is wherever you want!</h1>
-
-      <form id="locationForm">
-        <label for="locationInput">Enter a location:</label>
-        <input
-          type="text"
-          id="locationInput"
-          placeholder="e.g., New York, London"
-          required
-        />
-        
-        <div>
-          <label>
-            <input
-              class="radio"
-              type="radio"
-              name="unit"
-              value="imperial"
-              checked
-            />
-            Fahrenheit (°F)
-          </label>
-          <label>
-            <input class="radio" type="radio" name="unit" value="metric" />
-            Celsius (°C)
-          </label>
+      <section class="current-weather">
+        <div class="location-row">
+          <img
+            class="location-icon"
+            src="./assets/location-pin-svgrepo-com.svg"
+            alt="Location Pin Icon"
+          />
+          <h1 id="currentLocation"></h1>
         </div>
-        <button type="submit">Get Weather</button>
-      </form>
-      <button type="button" id="geoButton">Use My Location</button>
-      <p id="getWeather"></p>
-    </main>
+        <div class="weather-info">
+          <h2 id="currentTemp"></h2>
+          <span id="currentCondition"></span>
+        </div>
 
+        <div class="temperature-range">
+          <span>
+            <img class="high-low-temp" src="./assets/up-arrow-svgrepo-com.svg" />
+            <span id="highestTemp"></span>
+          </span>
+          <span> / </span>
+          <span>
+            <img class="high-low-temp" src="./assets/down-arrow-svgrepo-com.svg" />
+            <span id="lowestTemp"></span>
+          </span>
+        </div>
+      </section>
+
+      <section id="forecastContainer">
+        <h2>5-Day Forecast</h2>
+      </section>
+    </main>
     <script type="module" src="js/script.js"></script>
   </body>
 </html>

@@ -1,105 +1,100 @@
-import { fetchWeatherByCity } from "./weatherApi.js";
-import { OPENWEATHER_API_KEY } from "./config.js";
+import { fetchWeatherByCoords, fetchHourlyWeather } from "./weatherApi.js";
+// Get user's current location's weather data. (latitude, longitude)
+// Get hourly weather data too
+const currentLocation = document.getElementById("currentLocation");
+const currentTemp = document.getElementById("currentTemp");
+const currentCondition = document.getElementById("currentCondition");
+const lowestTemp = document.getElementById("lowestTemp");
+const highestTemp = document.getElementById("highestTemp");
 
-const form = document.getElementById("locationForm");
-const geoButton = document.getElementById("geoButton");
+function roundTemp(temp) {
+  return Math.round(temp);
+}
 
-// Handle form submission
-form.addEventListener("submit", async (event) => {
-  event.preventDefault();
+// Fetch and display current weather data
+function fetchAndDisplayCurrentWeather(latitude, longitude) {
+  fetchWeatherByCoords(latitude, longitude, "imperial")
+    .then((data) => {
+      currentLocation.innerHTML = `${data.location.name}, ${data.location.region}`;
+      currentTemp.innerHTML = `${roundTemp(data.current.temp_f)}°F`;
+      currentCondition.innerHTML = data.current.condition.text;
+    })
+    .catch((error) => {
+      console.error("Error fetching weather data:", error);
+    });
+}
 
-  const locationInput = document.getElementById("locationInput");
-  const location = locationInput.value;
-  const unit = document.querySelector('input[name="unit"]:checked').value;
+// Get all hourly forecasts from the fetched data
+// This function extracts hourly forecasts from the 3-day forecast data
+// WeatherApi free trial only allows 3 day forecast
+function getAllHourlyForecasts(data) {
+  const day1 = data.forecast.forecastday[0]?.hour || [];
+  const day2 = data.forecast.forecastday[1]?.hour || [];
+  const day3 = data.forecast.forecastday[2]?.hour || [];
+  lowestTemp.innerHTML = `${roundTemp(
+    data.forecast.forecastday[0].day.mintemp_f
+  )}°F`;
+  highestTemp.innerHTML = `${roundTemp(
+    data.forecast.forecastday[0].day.maxtemp_f
+  )}°F`;
+  return day1.concat(day2, day3);
+}
 
-  document.getElementById(
-    "getWeather"
-  ).innerText = `Getting weather for ${location}`;
+function getNextHours(allHours, currentHour) {
+  const currentHourIndex = allHours.findIndex((element) => {
+    const foundHourIndex = parseInt(element.time.split(" ")[1].split(":")[0]);
+    return foundHourIndex === currentHour;
+  });
+  return allHours.slice(currentHourIndex + 1, currentHourIndex + 15);
+}
 
-  try {
-    const data = await fetchWeatherByCity(location, unit);
-    if (data.weather) {
-      // Math for time of day
-      // Calculate local time based on the timezone offset
-      const localTimestamp = data.dt + data.timezone; // seconds
-      // Create a Date object for the local time
-      // Convert seconds to milliseconds (multiply by 1000)
-      const localDate = new Date(localTimestamp * 1000);
-      // Format the local time to a readable string
-      // Get hours and minutes in 12-hour format
-      const hours = localDate.getUTCHours();
-      console.log(hours);
-      const minutes = localDate.getUTCMinutes();
-      console.log(minutes);
-      // Format the time as HH:MM AM/PM
-      // Converts the hour from 24-hour format to 12-hour format.
-      // If hours is 0, it should be 12 AM; if hours is 12, it should be 12 PM.
-      const formattedTime = `${hours % 12 || 12}:${minutes
-        .toString()
-        .padStart(2, "0")} ${hours < 12 ? "AM" : "PM"}`;
-      console.log(`Local time: ${formattedTime}`);
-
-      // Round the temperature to the nearest whole number
-      const wholeTemperature = Math.round(data.main.temp);
-
-      document.getElementById(
-        "getWeather"
-      ).innerText = `Weather in ${location}: ${
-        data.weather[0].description
-      } with a temperature of ${wholeTemperature}${
-        unit === "imperial" ? "°F" : "°C"
-      }.`;
-    } else {
-      document.getElementById(
-        "getWeather"
-      ).innerText = `Could not retrieve weather data for ${location}.`;
+function displayHourlyForecast(nextHours) {
+  const forecastContainer = document.getElementById("forecastContainer");
+  forecastContainer.innerHTML = ""; // Clear previous content
+  const ulElement = document.createElement("ul");
+  // Enable horizontal scrolling
+  ulElement.addEventListener("wheel", function (e) {
+    if (e.deltaY !== 0) {
+      e.preventDefault();
+      ulElement.scrollLeft += e.deltaY;
     }
-  } catch (error) {
-    document.getElementById(
-      "getWeather"
-    ).innerText = `Error fetching weather data: ${error.message}`;
-  }
-});
+  });
+  nextHours.forEach((element) => {
+    const iconElement = document.createElement("img");
+    iconElement.src = element.condition.icon;
+    iconElement.alt = `${element.condition.text} icon`;
+    const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
+    let displayHour = rawHour % 12 || 12;
+    let ampm = rawHour < 12 ? "AM" : "PM";
+    const listItem = document.createElement("li");
+    listItem.innerHTML = `${displayHour} ${ampm} ${
+      iconElement.outerHTML
+    } ${roundTemp(element.temp_f)}°F`;
+    ulElement.appendChild(listItem);
+  });
+  forecastContainer.appendChild(ulElement);
+}
 
-// Handle geolocation button click
-geoButton.addEventListener("click", async () => {
-  document.getElementById("getWeather").innerText = "Getting your location...";
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        try {
-          // Reverse geocoding to get city and state
-          const geoRes = await fetch(
-            `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${OPENWEATHER_API_KEY}`
-          );
-          const geoData = await geoRes.json();
-          if (geoData && geoData.length > 0) {
-            const city = geoData[0].name;
-            const state = geoData[0].state ? ", " + geoData[0].state : "";
-            const locationInput = document.getElementById("locationInput");
-            locationInput.value = city + state;
-            document.getElementById(
-              "getWeather"
-            ).innerText = `Location found: ${city}${state}. Click 'Get Weather' to see the weather.`;
-          } else {
-            document.getElementById("getWeather").innerText =
-              "Could not determine your city from your location.";
-          }
-        } catch (error) {
-          document.getElementById(
-            "getWeather"
-          ).innerText = `Error getting city from location: ${error.message}`;
-        }
-      },
-      () => {
-        document.getElementById("getWeather").innerText =
-          "Unable to get your location.";
-      }
-    );
-  } else {
-    document.getElementById("getWeather").innerText =
-      "Geolocation is not supported by your browser.";
-  }
-});
+function handleGeolocationSuccess(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
+  fetchAndDisplayCurrentWeather(latitude, longitude);
+  fetchHourlyWeather(latitude, longitude, "imperial")
+    .then((data) => {
+      const currentHour = parseInt(
+        data.current.last_updated.split(" ")[1].split(":")[0]
+      );
+      const allHours = getAllHourlyForecasts(data);
+      const nextNextHours = getNextHours(allHours, currentHour);
+      displayHourlyForecast(nextNextHours);
+    })
+    .catch((error) => {
+      console.error("Error fetching hourly weather data:", error);
+    });
+}
+
+if (!navigator.geolocation) {
+  console.error("Geolocation is not supported by this browser.");
+} else {
+  navigator.geolocation.getCurrentPosition(handleGeolocationSuccess);
+}
