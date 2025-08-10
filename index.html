@@ -23,20 +23,64 @@
         </div>
 
         <div class="temperature-range">
-          <span>
-            <img class="high-low-temp" src="./assets/up-arrow-svgrepo-com.svg" />
-            <span id="highestTemp"></span>
-          </span>
-          <span> / </span>
-          <span>
-            <img class="high-low-temp" src="./assets/down-arrow-svgrepo-com.svg" />
-            <span id="lowestTemp"></span>
-          </span>
+          <div class="high-low-temp-container">
+            <span>
+              <img
+                class="high-low-temp"
+                src="./assets/up-arrow-svgrepo-com.svg"
+              />
+              <span id="highestTemp"></span>
+            </span>
+            <span> / </span>
+            <span>
+              <img
+                class="high-low-temp"
+                src="./assets/down-arrow-svgrepo-com.svg"
+              />
+              <span id="lowestTemp"></span>
+            </span>
+          </div>
+          <p>
+            Feels Like
+            <span id="feelsLikeTemp"></span>
+          </p>
         </div>
       </section>
 
-      <section id="forecastContainer">
-        <h2>5-Day Forecast</h2>
+      <section id="forecastContainer"></section>
+
+      <section class="weather-summary">
+        <div class="weather-brief" id="yesterdayWeatherIcon">
+          <p>Yesterday</p>
+          <div>
+            <span id="yesterdayHighestTemp"></span>
+            <span id="yesterdayLowestTemp"></span>
+          </div>
+        </div>
+
+        <div class="weather-brief" id="todaysWeatherIcon">
+          <p>Today</p>
+          <div>
+            <span id="todaysWeatherHighestTemp"></span>
+            <span id="todaysWeatherLowestTemp"></span>
+          </div>
+        </div>
+
+        <div class="weather-brief" id="tomorrowsWeatherIcon">
+          <p id="tomorrowDayOfWeek"></p>
+          <div>
+            <span id="tomorrowHighestTemp"></span>
+            <span id="tomorrowLowestTemp"></span>
+          </div>
+        </div>
+
+        <div class="weather-brief" id="dayAfterTomorrowsWeatherIcon">
+          <p id="nextDayOfWeek"></p>
+          <div>
+            <span id="dayAfterTomorrowHighestTemp"></span>
+            <span id="dayAfterTomorrowLowestTemp"></span>
+          </div>
+        </div>
       </section>
     </main>
     <script type="module" src="js/script.js"></script>

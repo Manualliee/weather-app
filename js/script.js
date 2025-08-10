@@ -1,58 +1,34 @@
-import { fetchWeatherByCoords, fetchHourlyWeather } from "./weatherApi.js";
-// Get user's current location's weather data. (latitude, longitude)
-// Get hourly weather data too
+import { roundTemp } from "./utils.js";
+import { getAllHourlyForecasts, getNextHours } from "./dataHelpers.js";
+import {
+  fetchWeatherByCoords,
+  fetchHourlyWeather,
+  fetchYesterdayWeather,
+} from "./weatherApi.js";
+
+// DOM elements
 const currentLocation = document.getElementById("currentLocation");
 const currentTemp = document.getElementById("currentTemp");
 const currentCondition = document.getElementById("currentCondition");
-const lowestTemp = document.getElementById("lowestTemp");
-const highestTemp = document.getElementById("highestTemp");
+const feelsLikeTemp = document.getElementById("feelsLikeTemp");
 
-function roundTemp(temp) {
-  return Math.round(temp);
-}
-
-// Fetch and display current weather data
 function fetchAndDisplayCurrentWeather(latitude, longitude) {
   fetchWeatherByCoords(latitude, longitude, "imperial")
     .then((data) => {
       currentLocation.innerHTML = `${data.location.name}, ${data.location.region}`;
-      currentTemp.innerHTML = `${roundTemp(data.current.temp_f)}°F`;
+      currentTemp.innerHTML = `${roundTemp(data.current.temp_f)}°`;
       currentCondition.innerHTML = data.current.condition.text;
+      feelsLikeTemp.innerHTML = `${roundTemp(data.current.feelslike_f)}°`;
     })
     .catch((error) => {
       console.error("Error fetching weather data:", error);
     });
 }
 
-// Get all hourly forecasts from the fetched data
-// This function extracts hourly forecasts from the 3-day forecast data
-// WeatherApi free trial only allows 3 day forecast
-function getAllHourlyForecasts(data) {
-  const day1 = data.forecast.forecastday[0]?.hour || [];
-  const day2 = data.forecast.forecastday[1]?.hour || [];
-  const day3 = data.forecast.forecastday[2]?.hour || [];
-  lowestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.mintemp_f
-  )}°F`;
-  highestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.maxtemp_f
-  )}°F`;
-  return day1.concat(day2, day3);
-}
-
-function getNextHours(allHours, currentHour) {
-  const currentHourIndex = allHours.findIndex((element) => {
-    const foundHourIndex = parseInt(element.time.split(" ")[1].split(":")[0]);
-    return foundHourIndex === currentHour;
-  });
-  return allHours.slice(currentHourIndex + 1, currentHourIndex + 15);
-}
-
 function displayHourlyForecast(nextHours) {
   const forecastContainer = document.getElementById("forecastContainer");
-  forecastContainer.innerHTML = ""; // Clear previous content
+  forecastContainer.innerHTML = "";
   const ulElement = document.createElement("ul");
-  // Enable horizontal scrolling
   ulElement.addEventListener("wheel", function (e) {
     if (e.deltaY !== 0) {
       e.preventDefault();
@@ -61,6 +37,35 @@ function displayHourlyForecast(nextHours) {
   });
   nextHours.forEach((element) => {
     const iconElement = document.createElement("img");
+    const hourlyPrecipitation = document.createElement("span");
+    const snowFlakeIcon = document.createElement("img");
+    const rainDropIcon = document.createElement("img");
+
+    if (
+      element.chance_of_rain > element.chance_of_snow &&
+      element.chance_of_rain > 0
+    ) {
+      rainDropIcon.src = "assets/water-drop-svgrepo-com.svg";
+      rainDropIcon.alt = "Rain icon";
+      hourlyPrecipitation.innerHTML = `${rainDropIcon.outerHTML} ${element.chance_of_rain}%`;
+    } else if (
+      element.chance_of_snow > element.chance_of_rain &&
+      element.chance_of_snow > 0
+    ) {
+      snowFlakeIcon.src = "assets/snow-svgrepo-com.svg";
+      snowFlakeIcon.alt = "Snow icon";
+      hourlyPrecipitation.innerHTML = `${snowFlakeIcon.outerHTML} ${element.chance_of_snow}%`;
+    } else if (
+      element.chance_of_rain === element.chance_of_snow &&
+      element.chance_of_rain > 0
+    ) {
+      rainDropIcon.src = "assets/water-drop-svgrepo-com.svg";
+      rainDropIcon.alt = "Rain icon";
+      hourlyPrecipitation.innerHTML = `${rainDropIcon.outerHTML} ${element.chance_of_rain}%`;
+    } else {
+      hourlyPrecipitation.innerHTML = `Clear`;
+    }
+
     iconElement.src = element.condition.icon;
     iconElement.alt = `${element.condition.text} icon`;
     const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
@@ -69,7 +74,7 @@ function displayHourlyForecast(nextHours) {
     const listItem = document.createElement("li");
     listItem.innerHTML = `${displayHour} ${ampm} ${
       iconElement.outerHTML
-    } ${roundTemp(element.temp_f)}°F`;
+    } ${roundTemp(element.temp_f)}° ${hourlyPrecipitation.outerHTML}`;
     ulElement.appendChild(listItem);
   });
   forecastContainer.appendChild(ulElement);
@@ -79,6 +84,24 @@ function handleGeolocationSuccess(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
   fetchAndDisplayCurrentWeather(latitude, longitude);
+
+  fetchYesterdayWeather(latitude, longitude, "imperial")
+    .then((data) => {
+      const yesterdayDay = data.forecast.forecastday[0].day;
+      const highest = yesterdayDay.maxtemp_f;
+      const lowest = yesterdayDay.mintemp_f;
+      document.getElementById(
+        "yesterdayHighestTemp"
+      ).textContent = `${roundTemp(highest)}°`;
+      document.getElementById(
+        "yesterdayLowestTemp"
+      ).textContent = `${roundTemp(lowest)}°`;
+    })
+
+    .catch((error) => {
+      console.error("Error fetching yesterday's weather data:", error);
+    });
+
   fetchHourlyWeather(latitude, longitude, "imperial")
     .then((data) => {
       const currentHour = parseInt(
