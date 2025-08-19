@@ -58,31 +58,77 @@
           </div>
         </div>
 
-        <div class="weather-brief" id="todaysWeatherIcon">
+        <div class="weather-brief" id="weatherSummaryDay0">
           <p>Today</p>
           <div>
-            <span id="todaysWeatherHighestTemp"></span>
-            <span id="todaysWeatherLowestTemp"></span>
+            <span id="weatherSummaryHighestTemp0"></span>
+            <span id="weatherSummaryLowestTemp0"></span>
           </div>
         </div>
 
-        <div class="weather-brief" id="tomorrowsWeatherIcon">
-          <p id="tomorrowDayOfWeek"></p>
+        <div class="weather-brief" id="weatherSummaryDay1">
+          <p id="weatherSummaryDay1Label"></p>
           <div>
-            <span id="tomorrowHighestTemp"></span>
-            <span id="tomorrowLowestTemp"></span>
+            <span id="weatherSummaryHighestTemp1"></span>
+            <span id="weatherSummaryLowestTemp1"></span>
           </div>
         </div>
 
-        <div class="weather-brief" id="dayAfterTomorrowsWeatherIcon">
-          <p id="nextDayOfWeek"></p>
+        <div class="weather-brief" id="weatherSummaryDay2">
+          <p id="weatherSummaryDay2Label"></p>
           <div>
-            <span id="dayAfterTomorrowHighestTemp"></span>
-            <span id="dayAfterTomorrowLowestTemp"></span>
+            <span id="weatherSummaryHighestTemp2"></span>
+            <span id="weatherSummaryLowestTemp2"></span>
           </div>
         </div>
       </section>
+
+      <section class="current-details">
+        <div>
+          <h3>UV Index</h3>
+          <span id="uv"></span>
+          <span id="uvDescription"></span>
+        </div>
+
+        <div>
+          <h3>Humidity</h3>
+          <span id="humidity"></span>
+          <span id="humidityDescription"></span>
+        </div>
+
+        <div>
+          <h3>Wind Speed</h3>
+          <span id="windSpeed"></span>
+          <span id="windDirection"></span>
+        </div>
+
+        <div>
+          <h3>Dew Point</h3>
+          <span id="dewPoint"></span>
+          <span id="dewPointDescription"></span>
+        </div>
+
+        <div>
+          <h3>Pressure</h3>
+          <span id="pressure"></span>
+        </div>
+
+        <div>
+          <h3>Visibility</h3>
+          <span id="visibility"></span>
+        </div>
+
+      </section>
     </main>
+    <footer>
+      <a href="saved-locations.html">
+        <img class="footer-img" src="./assets/hamburger-sidebar-svgrepo-com.svg" alt="Menu Icon" />
+      </a>
+
+      <a href="search-form.html">
+        <img class="footer-img" src="./assets/search.svg" alt="Search Icon" />
+      </a>
+    </footer>
     <script type="module" src="js/script.js"></script>
   </body>
 </html>

@@ -1,81 +1,193 @@
-import { roundTemp } from "./utils.js";
-import { getAllHourlyForecasts, getNextHours } from "./dataHelpers.js";
+import { removeLeadingZero } from "./utils.js";
+import { getAllDaysHours, getUvDescription, getHumidityDescription, getDewPointDescription } from "./dataHelpers.js";
 import {
   fetchWeatherByCoords,
   fetchHourlyWeather,
   fetchYesterdayWeather,
 } from "./weatherApi.js";
 
-// DOM elements
 const currentLocation = document.getElementById("currentLocation");
 const currentTemp = document.getElementById("currentTemp");
 const currentCondition = document.getElementById("currentCondition");
 const feelsLikeTemp = document.getElementById("feelsLikeTemp");
+const uv = document.getElementById("uv");
+const uvDescription = document.getElementById("uvDescription");
+const humidity = document.getElementById("humidity");
+const humidityDescription = document.getElementById("humidityDescription");
+const windSpeed = document.getElementById("windSpeed");
+const windDirection = document.getElementById("windDirection");
+const dewPoint = document.getElementById("dewPoint");
+const dewPointDescription = document.getElementById("dewPointDescription");
+const pressure = document.getElementById("pressure");
+const visibility = document.getElementById("visibility");
+
+function updateWeatherUI(latitude, longitude) {
+  fetchAndDisplayCurrentWeather(latitude, longitude);
+
+  fetchYesterdayWeather(latitude, longitude, "imperial")
+    .then((data) => {
+      //Only saves current locations data
+      if (!lat && !lon) {
+        // Save only if this is the user's real current location
+        const currentLocationData = {
+          lat: data.location.lat,
+          lon: data.location.lon,
+          name: data.location.name,
+          region: data.location.region,
+          country: data.location.country,
+        };
+        localStorage.setItem("currentLocationData", JSON.stringify(currentLocationData));
+      }
+
+      const yesterdayDay = data.forecast.forecastday[0].day;
+      const highest = yesterdayDay.maxtemp_f;
+      const lowest = yesterdayDay.mintemp_f;
+      document.getElementById(
+        "yesterdayHighestTemp"
+      ).textContent = `${Math.round(highest)}°`;
+      document.getElementById(
+        "yesterdayLowestTemp"
+      ).textContent = `${Math.round(lowest)}°`;
+    })
+    .catch((error) => {
+      console.error("Error fetching yesterday's weather data:", error);
+    });
+
+  fetchHourlyWeather(latitude, longitude, "imperial")
+    .then((data) => {
+      const { allHours, sunTimes } = getAllDaysHours(data);
+
+      document.getElementById("highestTemp").innerHTML = `${Math.round(
+        data.forecast.forecastday[0].day.maxtemp_f
+      )}°`;
+      document.getElementById("lowestTemp").innerHTML = `${Math.round(
+        data.forecast.forecastday[0].day.mintemp_f
+      )}°`;
+
+      const currentHour = parseInt(
+        data.current.last_updated.split(" ")[1].split(":")[0]
+      );
+      const nextHourIndex = allHours.findIndex((hourObj) => {
+        const hour = parseInt(hourObj.time.split(" ")[1].split(":")[0]);
+        return hour > currentHour;
+      });
+
+      const displayHours =
+        nextHourIndex !== -1
+          ? allHours.slice(nextHourIndex, nextHourIndex + 24)
+          : allHours.slice(0, 24);
+      displayHourlyForecast(displayHours, sunTimes);
+    })
+    .catch((error) => {
+      console.error("Error fetching hourly weather data:", error);
+    });
+}
+
+// For user's selected searched location
+const urlParams = new URLSearchParams(window.location.search);
+const lat = urlParams.get("lat");
+const lon = urlParams.get("lon");
+
+if (lat && lon) {
+  updateWeatherUI(lat, lon);
+} else if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(handleGeolocationSuccess);
+} else {
+  console.error("Geolocation is not supported by this browser.");
+}
 
 function fetchAndDisplayCurrentWeather(latitude, longitude) {
   fetchWeatherByCoords(latitude, longitude, "imperial")
     .then((data) => {
+      console.log("Current weather data:", data);
       currentLocation.innerHTML = `${data.location.name}, ${data.location.region}`;
-      currentTemp.innerHTML = `${roundTemp(data.current.temp_f)}°`;
+
+      currentTemp.innerHTML = `${Math.round(data.current.temp_f)}°`;
+
       currentCondition.innerHTML = data.current.condition.text;
-      feelsLikeTemp.innerHTML = `${roundTemp(data.current.feelslike_f)}°`;
+
+      feelsLikeTemp.innerHTML = `${Math.round(data.current.feelslike_f)}°`;
+
+      uv.innerHTML = `${data.current.uv}`;
+      uvDescription.innerHTML = getUvDescription(data.current.uv);
+
+      humidity.innerHTML = `${data.current.humidity}%`;
+      humidityDescription.innerHTML = getHumidityDescription(data.current.humidity);
+
+      windSpeed.innerHTML = `${data.current.wind_mph} mph`;
+
+      dewPoint.innerHTML = `${Math.round(data.current.dewpoint_f)}°`;
+      dewPointDescription.innerHTML = getDewPointDescription(data.current.dewpoint_f);
+
+      pressure.innerHTML = `${data.current.pressure_in} in`;
+
+      visibility.innerHTML = `${data.current.vis_miles} mi`;
     })
     .catch((error) => {
       console.error("Error fetching weather data:", error);
     });
 }
 
-function displayHourlyForecast(nextHours) {
+function displayHourlyForecast(nextHours, sunTimes) {
   const forecastContainer = document.getElementById("forecastContainer");
   forecastContainer.innerHTML = "";
   const ulElement = document.createElement("ul");
+
   ulElement.addEventListener("wheel", function (e) {
     if (e.deltaY !== 0) {
       e.preventDefault();
       ulElement.scrollLeft += e.deltaY;
     }
   });
-  nextHours.forEach((element) => {
+
+  nextHours.forEach((element, idx) => {
+    const sunRiseIcon = document.createElement("img");
+    const sunSetIcon = document.createElement("img");
     const iconElement = document.createElement("img");
     const hourlyPrecipitation = document.createElement("span");
-    const snowFlakeIcon = document.createElement("img");
-    const rainDropIcon = document.createElement("img");
 
-    if (
-      element.chance_of_rain > element.chance_of_snow &&
-      element.chance_of_rain > 0
-    ) {
-      rainDropIcon.src = "assets/water-drop-svgrepo-com.svg";
-      rainDropIcon.alt = "Rain icon";
-      hourlyPrecipitation.innerHTML = `${rainDropIcon.outerHTML} ${element.chance_of_rain}%`;
-    } else if (
-      element.chance_of_snow > element.chance_of_rain &&
-      element.chance_of_snow > 0
-    ) {
-      snowFlakeIcon.src = "assets/snow-svgrepo-com.svg";
-      snowFlakeIcon.alt = "Snow icon";
-      hourlyPrecipitation.innerHTML = `${snowFlakeIcon.outerHTML} ${element.chance_of_snow}%`;
-    } else if (
-      element.chance_of_rain === element.chance_of_snow &&
-      element.chance_of_rain > 0
-    ) {
-      rainDropIcon.src = "assets/water-drop-svgrepo-com.svg";
-      rainDropIcon.alt = "Rain icon";
-      hourlyPrecipitation.innerHTML = `${rainDropIcon.outerHTML} ${element.chance_of_rain}%`;
-    } else {
-      hourlyPrecipitation.innerHTML = `Clear`;
-    }
-
+    sunRiseIcon.src = "assets/sunrise-svgrepo-com.svg";
+    sunRiseIcon.alt = "Sunrise icon";
+    sunSetIcon.src = "assets/sunset-svgrepo-com.svg";
+    sunSetIcon.alt = "Sunset icon";
     iconElement.src = element.condition.icon;
     iconElement.alt = `${element.condition.text} icon`;
+
     const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
     let displayHour = rawHour % 12 || 12;
     let ampm = rawHour < 12 ? "AM" : "PM";
+
+    // Find which day this hour belongs to
+    const dayIndex = Math.floor(idx / 24);
+    const sunrise = removeLeadingZero(sunTimes[dayIndex].sunrise); // e.g., 6:13 AM
+    const sunset = removeLeadingZero(sunTimes[dayIndex].sunset); // e.g., 7:43 PM
+    const rawSunrise = parseInt(sunrise.split(" ")[0]); // e.g., 6
+    const rawSunset = parseInt(sunset.split(" ")[0]); // e.g., 7
+
     const listItem = document.createElement("li");
     listItem.innerHTML = `${displayHour} ${ampm} ${
       iconElement.outerHTML
-    } ${roundTemp(element.temp_f)}° ${hourlyPrecipitation.outerHTML}`;
+    } ${Math.round(element.temp_f)}° ${hourlyPrecipitation.outerHTML}`;
     ulElement.appendChild(listItem);
+
+    if (
+      displayHour === rawSunrise &&
+      ampm === "AM" &&
+      sunrise.split(" ")[1] === "AM"
+    ) {
+      const sunriseItem = document.createElement("li");
+      sunriseItem.innerHTML = `${sunRiseIcon.outerHTML} Sunrise ${sunrise}`;
+      ulElement.appendChild(sunriseItem);
+    }
+    if (
+      displayHour === rawSunset &&
+      ampm === "PM" &&
+      sunset.split(" ")[1] === "PM"
+    ) {
+      const sunsetItem = document.createElement("li");
+      sunsetItem.innerHTML = `${sunSetIcon.outerHTML} Sunset ${sunset}`;
+      ulElement.appendChild(sunsetItem);
+    }
   });
   forecastContainer.appendChild(ulElement);
 }
@@ -83,41 +195,6 @@ function displayHourlyForecast(nextHours) {
 function handleGeolocationSuccess(position) {
   const latitude = position.coords.latitude;
   const longitude = position.coords.longitude;
-  fetchAndDisplayCurrentWeather(latitude, longitude);
 
-  fetchYesterdayWeather(latitude, longitude, "imperial")
-    .then((data) => {
-      const yesterdayDay = data.forecast.forecastday[0].day;
-      const highest = yesterdayDay.maxtemp_f;
-      const lowest = yesterdayDay.mintemp_f;
-      document.getElementById(
-        "yesterdayHighestTemp"
-      ).textContent = `${roundTemp(highest)}°`;
-      document.getElementById(
-        "yesterdayLowestTemp"
-      ).textContent = `${roundTemp(lowest)}°`;
-    })
-
-    .catch((error) => {
-      console.error("Error fetching yesterday's weather data:", error);
-    });
-
-  fetchHourlyWeather(latitude, longitude, "imperial")
-    .then((data) => {
-      const currentHour = parseInt(
-        data.current.last_updated.split(" ")[1].split(":")[0]
-      );
-      const allHours = getAllHourlyForecasts(data);
-      const nextNextHours = getNextHours(allHours, currentHour);
-      displayHourlyForecast(nextNextHours);
-    })
-    .catch((error) => {
-      console.error("Error fetching hourly weather data:", error);
-    });
-}
-
-if (!navigator.geolocation) {
-  console.error("Geolocation is not supported by this browser.");
-} else {
-  navigator.geolocation.getCurrentPosition(handleGeolocationSuccess);
+  updateWeatherUI(latitude, longitude);
 }

@@ -21,6 +21,26 @@ export async function fetchWeatherByCity(city, unit) {
   return data;
 }
 
+export async function fetchCitySuggestions(city) {
+  try {
+    const response = await fetch(
+      `https://api.weatherapi.com/v1/search.json?key=${WEATHERAPI_KEY}&q=${encodeURIComponent(
+        city
+      )}`
+    );
+    const data = await response.json();
+    if (!response.ok || !Array.isArray(data)) {
+      throw new Error(
+        data.error?.message || "Could not retrieve city suggestions."
+      );
+    }
+    return data;
+  } catch (error) {
+    console.error("Error fetching city suggestions:", error);
+    throw error;
+  }
+}
+
 // Fetch weather data by user's coordinates
 export async function fetchWeatherByCoords(latitude, longitude, unit) {
   const weatherUnit = unit === "imperial" ? "f" : "c";

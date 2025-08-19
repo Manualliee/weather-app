@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/search.css" />
+    <title>Weather App - Search</title>
+  </head>
+  <body>
+    <main>
+      <form id="searchForm" type="submit">
+        <a href="index.html">
+          <img
+            class="back-arrow"
+            src="./assets/left-arrow-svgrepo-com.svg"
+            alt="Back Arrow"
+          />
+        </a>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Enter location"
+          autocomplete="off"
+        />
+        <button type="submit">Search</button>
+      </form>
+      <ul id="searchResults"></ul>
+
+      <div id="map" style="height: 500px"></div>
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    </main>
+    <script type="module" src="js/search-script.js"></script>
+  </body>
+</html>

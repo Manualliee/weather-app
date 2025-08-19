@@ -1,26 +1,3 @@
-import { roundTemp } from "./utils.js";
-
-const lowestTemp = document.getElementById("lowestTemp");
-const highestTemp = document.getElementById("highestTemp");
-const todaysWeatherHighestTemp = document.getElementById(
-  "todaysWeatherHighestTemp"
-);
-const todaysWeatherLowestTemp = document.getElementById(
-  "todaysWeatherLowestTemp"
-);
-const tomorrowLowestTemp = document.getElementById("tomorrowLowestTemp");
-const tomorrowHighestTemp = document.getElementById("tomorrowHighestTemp");
-const dayAfterTomorrowLowestTemp = document.getElementById(
-  "dayAfterTomorrowLowestTemp"
-);
-const dayAfterTomorrowHighestTemp = document.getElementById(
-  "dayAfterTomorrowHighestTemp"
-);
-const tomorrowDayOfWeek = document.getElementById("tomorrowDayOfWeek");
-const nextDayOfWeek = document.getElementById(
-  "nextDayOfWeek"
-);
-
 // Helper function to get yesterday's date in YYYY-MM-DD format
 export function getYesterdayDate() {
   const today = new Date();
@@ -33,60 +10,63 @@ export function getYesterdayDate() {
 
 export function getDayOfWeek(dateString) {
   // Split the date string and use Date.UTC to avoid timezone offset
-  const [year, month, day] = dateString.split('-');
+  const [year, month, day] = dateString.split("-");
   const date = new Date(Date.UTC(year, month - 1, day));
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   return days[date.getUTCDay()];
 }
 
-// Get all hourly forecasts data
-export function getAllHourlyForecasts(data) {
-  const day1 = data.forecast.forecastday[0]?.hour || [];
-  const day2 = data.forecast.forecastday[1]?.hour || [];
-  const day3 = data.forecast.forecastday[2]?.hour || [];
+// Get the all hours from today to the next two day
+export function getAllDaysHours(data, numDays = 3) {
+  const allHours = [];
+  const sunTimes = [];
+  for (let i = 0; i < numDays; i++) {
+    if (data.forecast.forecastday[i]) {
+      allHours.push(...data.forecast.forecastday[i].hour);
+      // Get the sunrise and sunset times for each day
+      sunTimes.push({
+        sunrise: data.forecast.forecastday[i].astro.sunrise,
+        sunset: data.forecast.forecastday[i].astro.sunset,
+      });
+    }
+  }
 
-  // Get tomorrow's and the next day's day of the week
-  tomorrowDayOfWeek.innerHTML = getDayOfWeek(data.forecast.forecastday[1].date); // "Sun"
-  nextDayOfWeek.innerHTML = getDayOfWeek(data.forecast.forecastday[2].date); // "Mon"
+  data.forecast.forecastday.forEach((day, i) => {
+    const dayName = getDayOfWeek(day.date); // e.g., "Mon", "Tue", etc.
+    const highest = Math.round(day.day.maxtemp_f);
+    const lowest = Math.round(day.day.mintemp_f);
 
-  // For current Location's highest/lowest temperature today
-  lowestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.mintemp_f
-  )}°`;
-  highestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.maxtemp_f
-  )}°`;
+    // Set the day label (ie "Mon", "Tue", etc.)
+    const labelEl = document.getElementById(`weatherSummaryDay${i}Label`);
+    if (labelEl) labelEl.textContent = dayName;
 
-  // For weather summary section
-  todaysWeatherHighestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.maxtemp_f
-  )}°`;
-  todaysWeatherLowestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[0].day.mintemp_f
-  )}°`;
-
-  tomorrowLowestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[1].day.mintemp_f
-  )}°`;
-  tomorrowHighestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[1].day.maxtemp_f
-  )}°`;
-
-  dayAfterTomorrowLowestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[2].day.mintemp_f
-  )}°`;
-  dayAfterTomorrowHighestTemp.innerHTML = `${roundTemp(
-    data.forecast.forecastday[2].day.maxtemp_f
-  )}°`;
-
-  return day1.concat(day2, day3);
+    // Set the high/low temps
+    const highEl = document.getElementById(`weatherSummaryHighestTemp${i}`);
+    const lowEl = document.getElementById(`weatherSummaryLowestTemp${i}`);
+    if (highEl) highEl.textContent = `${highest}°`;
+    if (lowEl) lowEl.textContent = `${lowest}°`;
+  });
+  return { allHours, sunTimes };
 }
 
-// Get the next 12 hours of forecast data
-export function getNextHours(allHours, currentHour) {
-  const currentHourIndex = allHours.findIndex((element) => {
-    const foundHourIndex = parseInt(element.time.split(" ")[1].split(":")[0]);
-    return foundHourIndex === currentHour;
-  });
-  return allHours.slice(currentHourIndex + 1, currentHourIndex + 15);
+export function getUvDescription(uv) {
+  if (uv < 3) return "Low";
+  if (uv < 6) return "Moderate";
+  if (uv < 8) return "High";
+  if (uv < 11) return "Very High";
+  return "Extreme";
+}
+
+export function getHumidityDescription(humidity) {
+  if (humidity < 30) return "Dry";
+  if (humidity < 60) return "Comfortable";
+  if (humidity < 80) return "Noticeable humidity";
+  return "Humid";
+}
+
+export function getDewPointDescription(dewPointF) {
+  if (dewPointF < 50) return "Comfortable";
+  if (dewPointF < 60) return "Noticeable";
+  if (dewPointF < 70) return "Sticky";
+  return "Oppressive";
 }

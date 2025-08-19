@@ -19,12 +19,14 @@ html {
 body {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 main {
   width: 75%;
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
@@ -94,7 +96,6 @@ ul {
 }
 
 #forecastContainer {
-  border: 2px solid red;
   width: 60%;
 }
 
@@ -105,8 +106,8 @@ ul {
   overflow-x: auto;
   list-style: none;
   scroll-behavior: smooth;
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;     
 }
 
 ul li {
@@ -145,3 +146,41 @@ ul::-webkit-scrollbar {
   width: 24px;
   height: 24px;
 } 
+
+.current-details {
+  border: 2px solid green;
+  width: 60%;
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.current-details > div {
+  border: 2px solid red;
+  height: 140px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  min-width: 170px;
+}
+
+footer {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.footer-img {
+  width: 32px;
+  height: 32px;
+  color: black;
+}
+
+#forecastContainer, .weather-summary, footer {
+  backdrop-filter: blur(10px);
+}
