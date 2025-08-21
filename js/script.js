@@ -1,5 +1,10 @@
 import { removeLeadingZero } from "./utils.js";
-import { getAllDaysHours, getUvDescription, getHumidityDescription, getDewPointDescription } from "./dataHelpers.js";
+import {
+  getAllDaysHours,
+  getUvDescription,
+  getHumidityDescription,
+  getDewPointDescription,
+} from "./dataHelpers.js";
 import {
   fetchWeatherByCoords,
   fetchHourlyWeather,
@@ -10,15 +15,15 @@ const currentLocation = document.getElementById("currentLocation");
 const currentTemp = document.getElementById("currentTemp");
 const currentCondition = document.getElementById("currentCondition");
 const feelsLikeTemp = document.getElementById("feelsLikeTemp");
-const uv = document.getElementById("uv");
 const uvDescription = document.getElementById("uvDescription");
+const uvBarIndicator = document.getElementById("uvBarIndicator");
 const humidity = document.getElementById("humidity");
 const humidityDescription = document.getElementById("humidityDescription");
+const humidityBarFill = document.getElementById("humidityBarFill");
 const windSpeed = document.getElementById("windSpeed");
-const windDirection = document.getElementById("windDirection");
+const windCompassArrow = document.getElementById("windCompassArrow");
 const dewPoint = document.getElementById("dewPoint");
 const dewPointDescription = document.getElementById("dewPointDescription");
-const pressure = document.getElementById("pressure");
 const visibility = document.getElementById("visibility");
 
 function updateWeatherUI(latitude, longitude) {
@@ -36,7 +41,10 @@ function updateWeatherUI(latitude, longitude) {
           region: data.location.region,
           country: data.location.country,
         };
-        localStorage.setItem("currentLocationData", JSON.stringify(currentLocationData));
+        localStorage.setItem(
+          "currentLocationData",
+          JSON.stringify(currentLocationData)
+        );
       }
 
       const yesterdayDay = data.forecast.forecastday[0].day;
@@ -99,7 +107,6 @@ if (lat && lon) {
 function fetchAndDisplayCurrentWeather(latitude, longitude) {
   fetchWeatherByCoords(latitude, longitude, "imperial")
     .then((data) => {
-      console.log("Current weather data:", data);
       currentLocation.innerHTML = `${data.location.name}, ${data.location.region}`;
 
       currentTemp.innerHTML = `${Math.round(data.current.temp_f)}°`;
@@ -108,18 +115,45 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
 
       feelsLikeTemp.innerHTML = `${Math.round(data.current.feelslike_f)}°`;
 
-      uv.innerHTML = `${data.current.uv}`;
       uvDescription.innerHTML = getUvDescription(data.current.uv);
+      // Clamp UV value between 0 and 12 for bar scaling
+      const uvMax = 12;
+      const uvValue = Math.round(data.current.uv);
+      const uvPercent = Math.min(uvValue / uvMax, 1) * 100;
+
+      // Move the indicator
+      uvBarIndicator.style.left = `calc(${uvPercent}% )`;
+      uvBarIndicator.textContent = uvValue;
 
       humidity.innerHTML = `${data.current.humidity}%`;
-      humidityDescription.innerHTML = getHumidityDescription(data.current.humidity);
+      humidityDescription.innerHTML = getHumidityDescription(
+        data.current.humidity
+      );
+      humidityBarFill.style.width = data.current.humidity + "%";
 
       windSpeed.innerHTML = `${data.current.wind_mph} mph`;
+      windCompassArrow.style.transform = `translate(-50%, -50%) rotate(${data.current.wind_degree}deg)`;
 
       dewPoint.innerHTML = `${Math.round(data.current.dewpoint_f)}°`;
-      dewPointDescription.innerHTML = getDewPointDescription(data.current.dewpoint_f);
+      dewPointDescription.innerHTML = getDewPointDescription(
+        data.current.dewpoint_f
+      );
 
-      pressure.innerHTML = `${data.current.pressure_in} in`;
+      const pressureValue = data.current.pressure_in;
+      const minPressure = 28.0;
+      const maxPressure = 31.0;
+      const percent = Math.max(
+        0,
+        Math.min(1, (pressureValue - minPressure) / (maxPressure - minPressure))
+      );
+
+      // 3/4 of a circle: arc length is about 235 (for this SVG)
+      const arcLength = 235;
+      const offset = arcLength * (1 - percent);
+
+      document.getElementById("pressureArc").style.strokeDashoffset = offset;
+      document.getElementById("pressureGaugeLabel").textContent =
+        pressureValue.toFixed(2) + " in";
 
       visibility.innerHTML = `${data.current.vis_miles} mi`;
     })
@@ -146,7 +180,7 @@ function displayHourlyForecast(nextHours, sunTimes) {
     const iconElement = document.createElement("img");
     const hourlyPrecipitation = document.createElement("span");
 
-    sunRiseIcon.src = "assets/sunrise-svgrepo-com.svg";
+    sunRiseIcon.src = "assets/sunrise-morning-svgrepo-com.svg";
     sunRiseIcon.alt = "Sunrise icon";
     sunSetIcon.src = "assets/sunset-svgrepo-com.svg";
     sunSetIcon.alt = "Sunset icon";
@@ -154,6 +188,24 @@ function displayHourlyForecast(nextHours, sunTimes) {
     iconElement.alt = `${element.condition.text} icon`;
 
     const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
+    console.log("Raw hour:", rawHour);
+    setWeatherBackground(rawHour);
+    // Set the weather background
+    function setWeatherBackground(hour) {
+        const body = document.body;
+        body.className = ""; // Remove previous weather class
+
+        if (hour >= 5 && hour < 12) {
+            body.classList.add("morning");
+        } else if (hour >= 12 && hour < 17) {
+            body.classList.add("afternoon");
+        } else if (hour >= 17 && hour < 21) {
+            body.classList.add("evening");
+        } else {
+            body.classList.add("night");
+        }
+    }
+
     let displayHour = rawHour % 12 || 12;
     let ampm = rawHour < 12 ? "AM" : "PM";
 

@@ -31,7 +31,7 @@
               />
               <span id="highestTemp"></span>
             </span>
-            <span> / </span>
+            <span class="slash"> / </span>
             <span>
               <img
                 class="high-low-temp"
@@ -84,49 +84,139 @@
       </section>
 
       <section class="current-details">
-        <div>
-          <h3>UV Index</h3>
-          <span id="uv"></span>
-          <span id="uvDescription"></span>
+        <div class="detail-container">
+          <div class="detail-title">
+            <img src="./assets/sun-material-svgrepo-com.svg" alt="UV Icon" />
+            <h3>UV Index</h3>
+          </div>
+          <div class="uv-bar-container main-ui">
+            <span id="uvDescription"></span>
+            <div class="uv-bar-bg">
+              <div class="uv-bar-indicator" id="uvBarIndicator">0</div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <h3>Humidity</h3>
-          <span id="humidity"></span>
-          <span id="humidityDescription"></span>
+        <div class="detail-container">
+          <div class="detail-header">
+            <div class="detail-title">
+              <img
+                src="./assets/humidity-svgrepo-com.svg"
+                alt="Humidity Icon"
+              />
+              <h3>Humidity</h3>
+            </div>
+            <span id="humidityDescription"></span>
+          </div>
+
+          <div class="humidity-bar-container main-ui">
+            <span id="humidity"></span>
+            <div class="humidity-bar-bg">
+              <div class="humidity-bar-fill" id="humidityBarFill"></div>
+            </div>
+          </div>
         </div>
 
-        <div>
-          <h3>Wind Speed</h3>
+        <div class="detail-container">
+          <div class="detail-title">
+            <img src="./assets/wind-svgrepo-com.svg" alt="Wind Icon" />
+            <h3>Wind</h3>
+          </div>
           <span id="windSpeed"></span>
-          <span id="windDirection"></span>
+          <div class="wind-compass">
+            <div class="compass-label n">N</div>
+            <div class="compass-label ne">NE</div>
+            <div class="compass-label e">E</div>
+            <div class="compass-label se">SE</div>
+            <div class="compass-label s">S</div>
+            <div class="compass-label sw">SW</div>
+            <div class="compass-label w">W</div>
+            <div class="compass-label nw">NW</div>
+            <img
+              id="windCompassArrow"
+              src="assets/compass-svgrepo-com.svg"
+              alt="Wind Arrow"
+              class="compass-arrow"
+            />
+          </div>
         </div>
 
-        <div>
-          <h3>Dew Point</h3>
-          <span id="dewPoint"></span>
-          <span id="dewPointDescription"></span>
+        <div class="detail-container">
+          <div class="detail-header">
+            <div class="detail-title">
+              <img
+                src="./assets/dew-point-filled-svgrepo-com.svg"
+                alt="Dew Point Icon"
+              />
+              <h3>Dew Point</h3>
+            </div>
+            <span id="dewPointDescription"></span>
+          </div>
+          <span class="detail-ui" id="dewPoint"></span>
         </div>
 
-        <div>
-          <h3>Pressure</h3>
+        <div class="detail-container">
+          <div class="detail-title">
+            <img
+              src="./assets/pressure-filled-svgrepo-com.svg"
+              alt="Pressure Icon"
+            />
+            <h3>Pressure</h3>
+          </div>
+          <div class="pressure-gauge">
+            <svg viewBox="0 0 120 120" class="gauge-svg">
+              <path
+                class="gauge-unfilled"
+                d="M 20 100 A 50 50 0 1 1 100 100"
+                fill="none"
+                stroke="#cfd8dc"
+                stroke-width="12"
+                stroke-linecap="round"
+              />
+              <path
+                id="pressureArc"
+                class="gauge-fill"
+                d="M 20 100 A 50 50 0 1 1 100 100"
+                fill="none"
+                stroke="#1976d2"
+                stroke-width="12"
+                stroke-linecap="round"
+                stroke-dasharray="235"
+                stroke-dashoffset="235"
+              />
+            </svg>
+            <div class="gauge-label" id="pressureGaugeLabel"></div>
+          </div>
           <span id="pressure"></span>
         </div>
 
-        <div>
-          <h3>Visibility</h3>
-          <span id="visibility"></span>
+        <div class="detail-container">
+          <div class="detail-title">
+            <img
+              src="./assets/visibility-svgrepo-com.svg"
+              alt="Visibility Icon"
+            />
+            <h3>Visibility</h3>
+          </div>
+          <span class="detail-ui" id="visibility"></span>
         </div>
-
       </section>
     </main>
     <footer>
       <a href="saved-locations.html">
-        <img class="footer-img" src="./assets/hamburger-sidebar-svgrepo-com.svg" alt="Menu Icon" />
+        <img
+          class="footer-img"
+          src="./assets/hamburger-sidebar-svgrepo-com.svg"
+          alt="Menu Icon"
+        />
       </a>
 
       <a href="search-form.html">
-        <img class="footer-img" src="./assets/search.svg" alt="Search Icon" />
+        <img
+          class="footer-img"
+          src="./assets/search-alt-svgrepo-com.svg"
+          alt="Search Icon"
+        />
       </a>
     </footer>
     <script type="module" src="js/script.js"></script>
