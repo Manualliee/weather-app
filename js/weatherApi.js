@@ -72,7 +72,7 @@ export async function fetchHourlyWeather(latitude, longitude, unit) {
 
   try {
     const response = await fetch(
-      `https://api.weatherapi.com/v1/forecast.json?key=${WEATHERAPI_KEY}&q=${latitude},${longitude}&days=3&aqi=no`
+      `https://api.weatherapi.com/v1/forecast.json?key=${WEATHERAPI_KEY}&q=${latitude},${longitude}&alerts=yes&days=3&aqi=no`
     );
     const data = await response.json();
     if (!response.ok || !data.forecast) {

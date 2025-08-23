@@ -70,3 +70,25 @@ export function getDewPointDescription(dewPointF) {
   if (dewPointF < 70) return "Sticky";
   return "Oppressive";
 }
+
+export function getCondensedAlertDescription(desc) {
+  // Regex to match ALL CAPS headers like HAZARD..., IMPACT..., etc.
+  const headerPattern = /^[A-Z\s]+\.{3}/;
+
+  // Prefer first *-line that is not a header
+  const lines = desc.split('\n').map(line => line.trim());
+  const bullet = lines.find(line => line.startsWith('*') && !headerPattern.test(line.replace(/^\*\s*/, '')));
+  if (bullet) {
+    return bullet.replace(/^\*\s*/, '');
+  }
+
+  // Otherwise, find the first non-header sentence
+  const sentences = desc.split(/(?<=\.)\s+/);
+  const firstUseful = sentences.find(s => !headerPattern.test(s.trim()));
+  if (firstUseful) {
+    return firstUseful.trim();
+  }
+
+  // Fallback: just return the first line
+  return lines[0] || desc;
+}

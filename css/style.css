@@ -28,7 +28,7 @@ body.morning {
   background: linear-gradient(135deg, #ffe082 0%, #fffde7 100%);
 }
 body.afternoon {
-  background: linear-gradient(135deg, #90caf9 0%, #e3f2fd 100%);
+  background: linear-gradient(180deg, #378fd8 0%, #5aa1d4 100%);
 }
 body.evening {
   background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
@@ -162,6 +162,14 @@ ul::-webkit-scrollbar {
   display: none;
 }
 
+#alertsContainer {
+  width: 100%;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 12px;
+  padding: 20px;
+}
+
 .weather-summary {
   display: flex;
   flex-direction: column;
@@ -244,7 +252,7 @@ ul::-webkit-scrollbar {
     #f44336,
     #9c27b0
   );
-  border-radius: 6px;
+  border-radius: 12px;
   position: relative;
   margin-top: 10px;
 }
@@ -274,8 +282,7 @@ ul::-webkit-scrollbar {
   width: 100%;
   height: 20px;
   background: #e0e0e0;
-  border-radius: 6px;
-  overflow: hidden;
+  border-radius: 12px;
   position: relative;
   margin-top: 10px;
 }
@@ -300,7 +307,7 @@ ul::-webkit-scrollbar {
   width: 125px;
   height: 125px;
   border-radius: 50%;
-  border: 5px solid #333;
+  border: 4px solid #333;
   background: #f8f8f8;
   position: relative;
   margin: 1rem auto;
@@ -413,11 +420,12 @@ footer {
   height: 32px;
 }
 
+#alertsContainer,
 #forecastContainer,
 .weather-summary,
 .detail-container {
-  background: rgba(100, 100, 100, 0.062); /* semi-transparent white */
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.247);
+  background: rgba(134, 134, 134, 0.171);
+  box-shadow: 0 0px 22px rgba(0, 0, 0, 0.247);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); /* for Safari */
   border-radius: 1rem;

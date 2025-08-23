@@ -4,6 +4,7 @@ import {
   getUvDescription,
   getHumidityDescription,
   getDewPointDescription,
+  getCondensedAlertDescription,
 } from "./dataHelpers.js";
 import {
   fetchWeatherByCoords,
@@ -63,6 +64,60 @@ function updateWeatherUI(latitude, longitude) {
 
   fetchHourlyWeather(latitude, longitude, "imperial")
     .then((data) => {
+      const alertsContainer = document.getElementById("alertsContainer");
+      alertsContainer.innerHTML = ""; // Clear previous alerts
+
+      if (data.alerts && data.alerts.alert && data.alerts.alert.length > 0) {
+        const alerts = data.alerts.alert;
+        // Show the first alert by default
+        const firstAlert = alerts[0];
+        const firstAlertDiv = document.createElement("div");
+        firstAlertDiv.classList.add("weather-alert");
+        firstAlertDiv.innerHTML = `
+          <h4>${firstAlert.headline}</h4>
+          <p><strong>From:</strong> ${firstAlert.effective}<br>
+            <strong>To:</strong> ${firstAlert.expires}</p>
+          <p>${getCondensedAlertDescription(firstAlert.desc)}</p>
+        `;
+        alertsContainer.appendChild(firstAlertDiv);
+
+        // If more than one alert, add dropdown
+        if (alerts.length > 1) {
+          const dropdownBtn = document.createElement("button");
+          dropdownBtn.textContent = `Show ${alerts.length - 1} more alert(s) ▼`;
+          dropdownBtn.style.margin = "10px 0";
+          dropdownBtn.style.cursor = "pointer";
+
+          const dropdownDiv = document.createElement("div");
+          dropdownDiv.style.display = "none";
+
+          for (let i = 1; i < alerts.length; i++) {
+            const alert = alerts[i];
+            const alertDiv = document.createElement("div");
+            alertDiv.classList.add("weather-alert", "dropdown-alert");
+            alertDiv.innerHTML = `
+              <h4>${alert.headline}</h4>
+              <p><strong>From:</strong> ${alert.effective}<br>
+                <strong>To:</strong> ${alert.expires}</p>
+              <p>${getCondensedAlertDescription(alert.desc)}</p>
+            `;
+            dropdownDiv.appendChild(alertDiv);
+          }
+
+          dropdownBtn.addEventListener("click", () => {
+            dropdownDiv.style.display =
+              dropdownDiv.style.display === "none" ? "block" : "none";
+            dropdownBtn.textContent =
+              dropdownDiv.style.display === "none"
+                ? `Show ${alerts.length - 1} more alert(s) ▼`
+                : `Hide additional alert(s) ▲`;
+          });
+
+          alertsContainer.appendChild(dropdownBtn);
+          alertsContainer.appendChild(dropdownDiv);
+        }
+      }
+
       const { allHours, sunTimes } = getAllDaysHours(data);
 
       document.getElementById("highestTemp").innerHTML = `${Math.round(
@@ -180,7 +235,7 @@ function displayHourlyForecast(nextHours, sunTimes) {
     const iconElement = document.createElement("img");
     const hourlyPrecipitation = document.createElement("span");
 
-    sunRiseIcon.src = "assets/sunrise-morning-svgrepo-com.svg";
+    sunRiseIcon.src = "assets/sunrise-svgrepo-com.svg";
     sunRiseIcon.alt = "Sunrise icon";
     sunSetIcon.src = "assets/sunset-svgrepo-com.svg";
     sunSetIcon.alt = "Sunset icon";
@@ -188,22 +243,21 @@ function displayHourlyForecast(nextHours, sunTimes) {
     iconElement.alt = `${element.condition.text} icon`;
 
     const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
-    console.log("Raw hour:", rawHour);
     setWeatherBackground(rawHour);
     // Set the weather background
     function setWeatherBackground(hour) {
-        const body = document.body;
-        body.className = ""; // Remove previous weather class
+      const body = document.body;
+      body.className = ""; // Remove previous weather class
 
-        if (hour >= 5 && hour < 12) {
-            body.classList.add("morning");
-        } else if (hour >= 12 && hour < 17) {
-            body.classList.add("afternoon");
-        } else if (hour >= 17 && hour < 21) {
-            body.classList.add("evening");
-        } else {
-            body.classList.add("night");
-        }
+      if (hour >= 5 && hour < 12) {
+        body.classList.add("morning");
+      } else if (hour >= 12 && hour < 17) {
+        body.classList.add("afternoon");
+      } else if (hour >= 17 && hour < 21) {
+        body.classList.add("evening");
+      } else {
+        body.classList.add("night");
+      }
     }
 
     let displayHour = rawHour % 12 || 12;
