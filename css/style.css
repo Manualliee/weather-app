@@ -17,7 +17,6 @@ html {
 }
 
 body {
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,10 +24,10 @@ body {
 }
 
 body.morning {
-  background: linear-gradient(135deg, #ffe082 0%, #fffde7 100%);
+  background: linear-gradient(210deg, #cf9904 0%, #626bec 50%);
 }
 body.afternoon {
-  background: linear-gradient(180deg, #378fd8 0%, #5aa1d4 100%);
+  background: linear-gradient(180deg, #4795d4 0%, #4eabee 100%);
 }
 body.evening {
   background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
@@ -111,12 +110,14 @@ ul {
   display: flex;
   flex-direction: row;
 
-   #highestTemp, #lowestTemp {
+  #highestTemp,
+  #lowestTemp {
     font-size: 1.5rem;
   }
 }
 
-.temperature-range > p, .slash {
+.temperature-range > p,
+.slash {
   font-size: 1.5rem;
 }
 
@@ -130,6 +131,35 @@ ul {
 .high-low-temp {
   width: 25px;
   height: 25px;
+}
+
+#alertsContainer {
+  .alert-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+  }
+
+  .weather-alert {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .dropdown-alert {
+    margin: 35px 0;
+  }
 }
 
 #forecastContainer {
@@ -146,8 +176,20 @@ ul {
   scroll-behavior: smooth;
   -ms-overflow-style: none;
   scrollbar-width: none;
-  -webkit-mask-image: linear-gradient(to right, transparent 0px, black 40px, black calc(100% - 40px), transparent 100%); /* Safari/Chrome */
-  mask-image: linear-gradient(to right, transparent 0px, black 40px, black calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    black 40px,
+    black calc(100% - 40px),
+    transparent 100%
+  ); /* Safari/Chrome */
+  mask-image: linear-gradient(
+    to right,
+    transparent 0px,
+    black 40px,
+    black calc(100% - 40px),
+    transparent 100%
+  );
 }
 
 ul li {

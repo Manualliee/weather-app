@@ -65,7 +65,7 @@ function updateWeatherUI(latitude, longitude) {
   fetchHourlyWeather(latitude, longitude, "imperial")
     .then((data) => {
       const alertsContainer = document.getElementById("alertsContainer");
-      alertsContainer.innerHTML = ""; // Clear previous alerts
+      alertsContainer.innerHTML = "<div class='alert-header'><img src='./assets/alert-triangle-svgrepo-com.svg' alt='Weather Alert Icon'><h2>Weather Alerts</h2></div>"; // Clears previous alerts and always have Weather Alerts title and image
 
       if (data.alerts && data.alerts.alert && data.alerts.alert.length > 0) {
         const alerts = data.alerts.alert;
