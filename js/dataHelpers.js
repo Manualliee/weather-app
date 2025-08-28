@@ -16,6 +16,15 @@ export function getDayOfWeek(dateString) {
   return days[date.getUTCDay()];
 }
 
+export function formatMonthDay(dateStr) {
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const [year, month, day] = dateStr.split("-");
+  return `${months[parseInt(month, 10) - 1]} ${parseInt(day, 10)}`;
+}
+
 // Get the all hours from today to the next two day
 export function getAllDaysHours(data, numDays = 3) {
   const allHours = [];

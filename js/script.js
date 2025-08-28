@@ -34,7 +34,7 @@ function updateWeatherUI(latitude, longitude) {
     .then((data) => {
       //Only saves current locations data
       if (!lat && !lon) {
-        // Save only if this is the user's real current location
+        // Save only if this is the user's current location
         const currentLocationData = {
           lat: data.location.lat,
           lon: data.location.lon,
@@ -65,9 +65,10 @@ function updateWeatherUI(latitude, longitude) {
   fetchHourlyWeather(latitude, longitude, "imperial")
     .then((data) => {
       const alertsContainer = document.getElementById("alertsContainer");
-      alertsContainer.innerHTML = "<div class='alert-header'><img src='./assets/alert-triangle-svgrepo-com.svg' alt='Weather Alert Icon'><h2>Weather Alerts</h2></div>"; // Clears previous alerts and always have Weather Alerts title and image
+      alertsContainer.innerHTML = ""; // Clears previous alerts
 
       if (data.alerts && data.alerts.alert && data.alerts.alert.length > 0) {
+        alertsContainer.innerHTML = "<div class='alert-header'><img src='./assets/alert-triangle-svgrepo-com.svg' alt='Weather Alert Icon'><h2>Weather Alerts</h2></div>";
         const alerts = data.alerts.alert;
         // Show the first alert by default
         const firstAlert = alerts[0];

@@ -1,0 +1,54 @@
+body {
+  background: black;
+}
+
+#savedLocationsList {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 25px;
+}
+
+#savedLocationsList li {
+  width: 90%;
+  height: 120px;
+  background: rgba(65, 67, 68, 0.534);
+  border-radius: 35px;
+  padding: 70px;
+  margin: 30px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.location-info {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
+  h3 {
+    font-weight: bold;
+    font-size: 1.5rem;
+  }
+}
+
+.weather-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.current-icon-temp {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+
+  .current-temp {
+    font-size: 2rem;
+  }
+}

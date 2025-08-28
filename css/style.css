@@ -12,6 +12,12 @@
   font: inherit;
 }
 
+html,
+body {
+  min-height: 100vh;
+  width: 100%;
+}
+
 html {
   font-family: "Roboto", sans-serif;
 }
@@ -24,16 +30,28 @@ body {
 }
 
 body.morning {
-  background: linear-gradient(210deg, #cf9904 0%, #626bec 50%);
+  background: linear-gradient(180deg, #dabd7b 0%, #f7978d 50%, #948eeb 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 body.afternoon {
-  background: linear-gradient(180deg, #4795d4 0%, #4eabee 100%);
+  background: linear-gradient(180deg, #1577c7 0%, #4795d4 50%, #91c1e0 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 body.evening {
-  background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+  background: linear-gradient(180deg, #fbc2eb 0%, #a6c1ee 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 body.night {
   background: linear-gradient(180deg, #00284e 0%, #244069 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 main {
@@ -160,6 +178,11 @@ ul {
   .dropdown-alert {
     margin: 35px 0;
   }
+}
+
+/* Hide the alerts container if empty */
+#alertsContainer:empty {
+  display: none;
 }
 
 #forecastContainer {
@@ -432,6 +455,16 @@ ul::-webkit-scrollbar {
   height: 100%;
   display: block;
 }
+
+.gauge-unfilled {
+  stroke: #c0c0c07e;
+}
+
+.gauge-fill {
+  stroke: #fff;
+  transition: stroke-dashoffset 0.6s;
+}
+
 .gauge-label {
   position: absolute;
   left: 50%;
@@ -439,13 +472,7 @@ ul::-webkit-scrollbar {
   transform: translate(-50%, -50%);
   font-size: 1.5rem;
   font-weight: bold;
-  color: #1976d2;
-}
-.gauge-bg {
-  stroke: #eee;
-}
-.gauge-fill {
-  transition: stroke-dashoffset 0.6s;
+  color: #ffffff;
 }
 
 footer {
@@ -454,7 +481,11 @@ footer {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 2rem;
+  margin-top: 5rem;
+  background: rgba(117, 117, 117, 0.151);
+  box-shadow: 0 0px 22px rgba(0, 0, 0, 0.274);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px); /* for Safari */
 }
 
 .footer-img {
@@ -466,8 +497,8 @@ footer {
 #forecastContainer,
 .weather-summary,
 .detail-container {
-  background: rgba(134, 134, 134, 0.171);
-  box-shadow: 0 0px 22px rgba(0, 0, 0, 0.247);
+  background: rgba(117, 117, 117, 0.151);
+  box-shadow: 0 0px 22px rgba(0, 0, 0, 0.274);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px); /* for Safari */
   border-radius: 1rem;
