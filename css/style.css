@@ -53,6 +53,12 @@ body.night {
   background-repeat: no-repeat;
   background-size: cover;
 }
+body.cloudy {
+  background: linear-gradient(180deg, #2a3552 0%, #4a5880 50%, #8692b4 100%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
 
 main {
   width: 75%;
@@ -84,12 +90,12 @@ ul {
 .current-weather {
   width: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: left;
-  gap: 2rem;
+  flex-direction: row;
+  justify-content: space-between;
 }
 
-.current-weather > .location-row {
+
+.current-weather-info > .location-row {
   padding: 1rem 0;
   display: flex;
   align-items: center;
@@ -106,7 +112,7 @@ ul {
   height: 25px;
 }
 
-.current-weather > .weather-info {
+.current-weather-info > .weather-info {
   #currentTemp {
     font-size: 5.5rem;
     font-weight: bold;
@@ -149,6 +155,12 @@ ul {
 .high-low-temp {
   width: 25px;
   height: 25px;
+}
+
+.current-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #alertsContainer {
@@ -235,6 +247,15 @@ ul::-webkit-scrollbar {
   padding: 20px;
 }
 
+#alertsContainer > button {
+  background: none;
+  border: none;
+  color: rgba(216, 213, 213, 0.582);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0;
+}
+
 .weather-summary {
   display: flex;
   flex-direction: column;
@@ -249,6 +270,17 @@ ul::-webkit-scrollbar {
   justify-content: space-between;
   align-items: center;
   gap: 8px;
+}
+
+.day-label, .high-low {
+  font-size: 1.25rem;
+}
+
+.icons-high-low {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
 }
 
 .weather-brief > img {

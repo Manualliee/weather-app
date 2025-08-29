@@ -4,7 +4,7 @@ import {
   getUvDescription,
   getHumidityDescription,
   getDewPointDescription,
-  getCondensedAlertDescription,
+  formatAlertDateTime
 } from "./dataHelpers.js";
 import {
   fetchWeatherByCoords,
@@ -26,6 +26,7 @@ const windCompassArrow = document.getElementById("windCompassArrow");
 const dewPoint = document.getElementById("dewPoint");
 const dewPointDescription = document.getElementById("dewPointDescription");
 const visibility = document.getElementById("visibility");
+let lottieWeatherInstance = null;
 
 function updateWeatherUI(latitude, longitude) {
   fetchAndDisplayCurrentWeather(latitude, longitude);
@@ -49,14 +50,37 @@ function updateWeatherUI(latitude, longitude) {
       }
 
       const yesterdayDay = data.forecast.forecastday[0].day;
+      const yesterdayHours = data.forecast.forecastday[0].hour;
       const highest = yesterdayDay.maxtemp_f;
       const lowest = yesterdayDay.mintemp_f;
+
+      // Set high/low temps
       document.getElementById(
         "yesterdayHighestTemp"
       ).textContent = `${Math.round(highest)}°`;
       document.getElementById(
         "yesterdayLowestTemp"
       ).textContent = `${Math.round(lowest)}°`;
+
+      // Set day icon
+      const dayIconEl = document.getElementById("weatherSummaryDayIcon");
+      if (dayIconEl) {
+        dayIconEl.src = "https:" + yesterdayDay.condition.icon;
+        dayIconEl.alt = yesterdayDay.condition.text + " (Day)";
+      }
+
+      // Set night icon (use hour 0 or a late hour as night)
+      const nightHour =
+        yesterdayHours.find((h) => {
+          const hour = parseInt(h.time.split(" ")[1].split(":")[0]);
+          return hour === 0 || hour === 21 || hour === 22 || hour === 23;
+        }) || yesterdayHours[0];
+
+      const nightIconEl = document.getElementById("weatherSummaryNightIcon");
+      if (nightIconEl && nightHour) {
+        nightIconEl.src = "https:" + nightHour.condition.icon;
+        nightIconEl.alt = nightHour.condition.text + " (Night)";
+      }
     })
     .catch((error) => {
       console.error("Error fetching yesterday's weather data:", error);
@@ -68,7 +92,8 @@ function updateWeatherUI(latitude, longitude) {
       alertsContainer.innerHTML = ""; // Clears previous alerts
 
       if (data.alerts && data.alerts.alert && data.alerts.alert.length > 0) {
-        alertsContainer.innerHTML = "<div class='alert-header'><img src='./assets/alert-triangle-svgrepo-com.svg' alt='Weather Alert Icon'><h2>Weather Alerts</h2></div>";
+        alertsContainer.innerHTML =
+          "<div class='alert-header'><img src='./assets/alert-triangle-svgrepo-com.svg' alt='Weather Alert Icon'><h2>Weather Alerts</h2></div>";
         const alerts = data.alerts.alert;
         // Show the first alert by default
         const firstAlert = alerts[0];
@@ -76,9 +101,8 @@ function updateWeatherUI(latitude, longitude) {
         firstAlertDiv.classList.add("weather-alert");
         firstAlertDiv.innerHTML = `
           <h4>${firstAlert.headline}</h4>
-          <p><strong>From:</strong> ${firstAlert.effective}<br>
-            <strong>To:</strong> ${firstAlert.expires}</p>
-          <p>${getCondensedAlertDescription(firstAlert.desc)}</p>
+          <p><strong>From:</strong> ${formatAlertDateTime(firstAlert.effective)}<br>
+          <strong>To:</strong> ${formatAlertDateTime(firstAlert.expires)}</p>
         `;
         alertsContainer.appendChild(firstAlertDiv);
 
@@ -98,9 +122,8 @@ function updateWeatherUI(latitude, longitude) {
             alertDiv.classList.add("weather-alert", "dropdown-alert");
             alertDiv.innerHTML = `
               <h4>${alert.headline}</h4>
-              <p><strong>From:</strong> ${alert.effective}<br>
-                <strong>To:</strong> ${alert.expires}</p>
-              <p>${getCondensedAlertDescription(alert.desc)}</p>
+              <p><strong>From:</strong> ${formatAlertDateTime(alert.effective)}<br>
+              <strong>To:</strong> ${formatAlertDateTime(alert.expires)}</p>
             `;
             dropdownDiv.appendChild(alertDiv);
           }
@@ -163,6 +186,55 @@ if (lat && lon) {
 function fetchAndDisplayCurrentWeather(latitude, longitude) {
   fetchWeatherByCoords(latitude, longitude, "imperial")
     .then((data) => {
+      console.log(data);
+      function getLottiePathForCondition(conditionText) {
+        const condition = conditionText.toLowerCase();
+        if (condition.includes("sunny") || condition.includes("clear"))
+          return "./assets/lottie/Weather-sunny.json";
+        if (
+          condition.includes("partly cloudy") ||
+          condition.includes("mostly sunny")
+        )
+          return "./assets/lottie/Weather-partly-cloudy.json";
+        if (condition.includes("cloudy") || condition.includes("overcast"))
+          return "./assets/lottie/Weather-windy.json";
+        if (
+          condition.includes("rain") ||
+          condition.includes("drizzle") ||
+          condition.includes("shower")
+        )
+          return "./assets/lottie/Rainy.json";
+        if (
+          condition.includes("snow") ||
+          condition.includes("blizzard") ||
+          condition.includes("flurries")
+        )
+          return "./assets/lottie/Weather-snow.json";
+        if (condition.includes("thunder"))
+          return "./assets/lottie/Weather-thunder.json";
+        if (condition.includes("fog") || condition.includes("mist"))
+          return "./assets/lottie/Weather-fog.json";
+        // Add more as needed
+        return "./assets/lottie/default.json"; // fallback
+      }
+
+      function setWeatherLottie(conditionText) {
+        const path = getLottiePathForCondition(conditionText);
+
+        // Destroy previous animation if it exists
+        if (lottieWeatherInstance) {
+          lottieWeatherInstance.destroy();
+        }
+
+        lottieWeatherInstance = lottie.loadAnimation({
+          container: document.getElementById("lottieWeatherIcon"),
+          renderer: "svg",
+          loop: true,
+          autoplay: true,
+          path: path,
+        });
+      }
+
       currentLocation.innerHTML = `${data.location.name}, ${data.location.region}`;
 
       currentTemp.innerHTML = `${Math.round(data.current.temp_f)}°`;
@@ -170,6 +242,19 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
       currentCondition.innerHTML = data.current.condition.text;
 
       feelsLikeTemp.innerHTML = `${Math.round(data.current.feelslike_f)}°`;
+
+      const conditionText = data.current.condition.text.toLowerCase();
+      const isCloudy =
+        conditionText === "cloudy" ||
+        conditionText === "overcast" ||
+        conditionText === "mostly cloudy";
+
+      // For main UI:
+      if (isCloudy) {
+        document.body.classList.add("cloudy");
+      } else {
+        document.body.classList.remove("cloudy");
+      }
 
       uvDescription.innerHTML = getUvDescription(data.current.uv);
       // Clamp UV value between 0 and 12 for bar scaling
@@ -212,6 +297,8 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
         pressureValue.toFixed(2) + " in";
 
       visibility.innerHTML = `${data.current.vis_miles} mi`;
+
+      setWeatherLottie(data.current.condition.text);
     })
     .catch((error) => {
       console.error("Error fetching weather data:", error);
@@ -248,13 +335,13 @@ function displayHourlyForecast(nextHours, sunTimes) {
     // Set the weather background
     function setWeatherBackground(hour) {
       const body = document.body;
-      body.className = ""; // Remove previous weather class
-
+      
+      body.classList.remove("morning", "afternoon", "evening", "night");
       if (hour >= 5 && hour < 12) {
         body.classList.add("morning");
       } else if (hour >= 12 && hour < 17) {
         body.classList.add("afternoon");
-      } else if (hour >= 17 && hour < 21) {
+      } else if (hour >= 17 && hour < 20) {
         body.classList.add("evening");
       } else {
         body.classList.add("night");

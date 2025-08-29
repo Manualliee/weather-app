@@ -12,9 +12,9 @@ body {
 }
 
 #savedLocationsList li {
-  width: 90%;
-  height: 120px;
-  background: rgba(65, 67, 68, 0.534);
+  position: relative;
+  width: 80%;
+  height: 180px;
   border-radius: 35px;
   padding: 70px;
   margin: 30px;
@@ -22,6 +22,22 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+li.morning {
+  background: linear-gradient(135deg, #dabd7b 0%, #f7978d 50%, #948eeb 100%);
+}
+li.afternoon {
+  background: linear-gradient(135deg, #4795d4 0%, #4eabee 100%);
+}
+li.evening {
+  background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%);
+}
+li.night {
+  background: linear-gradient(135deg, #00284e 0%, #244069 100%);
+}
+li.cloudy {
+  background: linear-gradient(135deg, #2a3552 0%, #4a5880 50%, #8692b4 100%);
 }
 
 .location-info {
@@ -33,6 +49,12 @@ body {
     font-weight: bold;
     font-size: 1.5rem;
   }
+}
+
+.region-country,
+.date-time {
+  font-size: 1rem;
+  color: rgba(254, 255, 255, 0.808);
 }
 
 .weather-info {
@@ -51,4 +73,27 @@ body {
   .current-temp {
     font-size: 2rem;
   }
+}
+
+.high-low-temp {
+  width: 100%;
+  font-size: 1.5rem;
+  color: rgb(255, 255, 255);
+}
+
+.delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  color: rgb(255, 255, 255);
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

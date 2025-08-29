@@ -23,6 +23,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         currentLocation.lon,
         "imperial"
       );
+      const conditionText = weather.current.condition.text.toLowerCase();
+      const isCloudy =
+        conditionText === "cloudy" ||
+        conditionText === "overcast" ||
+        conditionText === "mostly cloudy";
+
+      if (isCloudy) {
+        currentLocationLi.classList.add("cloudy");
+      } else {
+        currentLocationLi.classList.remove("cloudy");
+      }
 
       const currentTemp = Math.round(weather.current.temp_f);
       const currentTempSpan = document.createElement("span");
@@ -44,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       const high = weather.forecast.forecastday[0].day.maxtemp_f;
       const low = weather.forecast.forecastday[0].day.mintemp_f;
       const tempSpan = document.createElement("span");
+      tempSpan.className = "high-low-temp";
       tempSpan.textContent = ` ${Math.round(high)}° / ${Math.round(low)}°`;
 
       // Current time
@@ -53,17 +65,31 @@ document.addEventListener("DOMContentLoaded", async () => {
       let ampm = hour >= 12 ? "PM" : "AM";
       let hour12 = hour % 12 || 12;
 
+      let timeOfDayClass = "";
+      if (hour >= 5 && hour < 12) {
+        timeOfDayClass = "morning";
+      } else if (hour >= 12 && hour < 17) {
+        timeOfDayClass = "afternoon";
+      } else if (hour >= 17 && hour < 20) {
+        timeOfDayClass = "evening";
+      } else {
+        timeOfDayClass = "night";
+      }
+      currentLocationLi.classList.add(timeOfDayClass);
+
       // --- Build infoDiv ---
       const nameH3 = document.createElement("h3");
       nameH3.textContent = currentLocation.name;
 
       const regionCountrySpan = document.createElement("span");
       regionCountrySpan.textContent = `${currentLocation.region}, ${currentLocation.country}`;
+      regionCountrySpan.className = "region-country";
 
       const dateTimeSpan = document.createElement("span");
       dateTimeSpan.textContent = `${getDayOfWeek(
         locationTime[0]
       )}, ${formatMonthDay(locationTime[0])} at ${hour12}:${minuteStr} ${ampm}`;
+      dateTimeSpan.className = "date-time";
 
       infoDiv.appendChild(nameH3);
       infoDiv.appendChild(regionCountrySpan);
@@ -100,6 +126,19 @@ document.addEventListener("DOMContentLoaded", async () => {
           location.lon,
           "imperial"
         );
+
+        const conditionText = weather.current.condition.text.toLowerCase();
+        const isCloudy =
+          conditionText === "cloudy" ||
+          conditionText === "overcast" ||
+          conditionText === "mostly cloudy";
+
+        if (isCloudy) {
+          locationLi.classList.add("cloudy");
+        } else {
+          locationLi.classList.remove("cloudy");
+        }
+
         const currentTemp = Math.round(weather.current.temp_f);
         const currentTempSpan = document.createElement("span");
         currentTempSpan.className = "current-temp";
@@ -119,6 +158,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         const high = weather.forecast.forecastday[0].day.maxtemp_f;
         const low = weather.forecast.forecastday[0].day.mintemp_f;
         const tempSpan = document.createElement("span");
+        tempSpan.className = "high-low-temp";
         tempSpan.textContent = ` ${Math.round(high)}° / ${Math.round(low)}°`;
 
         // Current time
@@ -128,12 +168,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         let ampm = hour >= 12 ? "PM" : "AM";
         let hour12 = hour % 12 || 12;
 
+        let timeOfDayClass = "";
+        if (hour >= 5 && hour < 12) {
+          timeOfDayClass = "morning";
+        } else if (hour >= 12 && hour < 17) {
+          timeOfDayClass = "afternoon";
+        } else if (hour >= 17 && hour < 20) {
+          timeOfDayClass = "evening";
+        } else {
+          timeOfDayClass = "night";
+        }
+        locationLi.classList.add(timeOfDayClass);
+
         // --- Build infoDiv ---
         const nameH3 = document.createElement("h3");
         nameH3.textContent = location.name;
 
         const regionCountrySpan = document.createElement("span");
         regionCountrySpan.textContent = `${location.region}, ${location.country}`;
+        regionCountrySpan.className = "region-country";
 
         const dateTimeSpan = document.createElement("span");
         dateTimeSpan.textContent = `${getDayOfWeek(
@@ -141,6 +194,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         )}, ${formatMonthDay(
           locationTime[0]
         )} at ${hour12}:${minuteStr} ${ampm}`;
+        dateTimeSpan.className = "date-time";
 
         infoDiv.appendChild(nameH3);
         infoDiv.appendChild(regionCountrySpan);
@@ -159,7 +213,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
       // Delete button
       const deleteBtn = document.createElement("button");
-      deleteBtn.textContent = "Delete";
+      deleteBtn.className = "delete-btn";
+      deleteBtn.textContent = "x";
       deleteBtn.addEventListener("click", (e) => {
         e.stopPropagation();
         let savedLocations =

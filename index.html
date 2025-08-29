@@ -9,41 +9,50 @@
   <body>
     <main>
       <section class="current-weather">
-        <div class="location-row">
-          <img
-            class="location-icon"
-            src="./assets/location-pin-svgrepo-com.svg"
-            alt="Location Pin Icon"
-          />
-          <h1 id="currentLocation"></h1>
-        </div>
-        <div class="weather-info">
-          <h2 id="currentTemp"></h2>
-          <span id="currentCondition"></span>
+        <div class="current-weather-info">
+          <div class="location-row">
+            <img
+              class="location-icon"
+              src="./assets/location-pin-svgrepo-com.svg"
+              alt="Location Pin Icon"
+            />
+            <h1 id="currentLocation"></h1>
+          </div>
+          <div class="weather-info">
+            <h2 id="currentTemp"></h2>
+            <span id="currentCondition"></span>
+          </div>
+
+          <div class="temperature-range">
+            <div class="high-low-temp-container">
+              <span>
+                <img
+                  class="high-low-temp"
+                  src="./assets/up-arrow-svgrepo-com.svg"
+                />
+                <span id="highestTemp"></span>
+              </span>
+              <span class="slash"> / </span>
+              <span>
+                <img
+                  class="high-low-temp"
+                  src="./assets/down-arrow-svgrepo-com.svg"
+                />
+                <span id="lowestTemp"></span>
+              </span>
+            </div>
+            <p>
+              Feels Like
+              <span id="feelsLikeTemp"></span>
+            </p>
+          </div>
         </div>
 
-        <div class="temperature-range">
-          <div class="high-low-temp-container">
-            <span>
-              <img
-                class="high-low-temp"
-                src="./assets/up-arrow-svgrepo-com.svg"
-              />
-              <span id="highestTemp"></span>
-            </span>
-            <span class="slash"> / </span>
-            <span>
-              <img
-                class="high-low-temp"
-                src="./assets/down-arrow-svgrepo-com.svg"
-              />
-              <span id="lowestTemp"></span>
-            </span>
-          </div>
-          <p>
-            Feels Like
-            <span id="feelsLikeTemp"></span>
-          </p>
+        <div class="current-icon">
+          <div
+            id="lottieWeatherIcon"
+            style="width: 250px; height: 250px; margin: 0 auto"
+          ></div>
         </div>
       </section>
 
@@ -55,34 +64,82 @@
 
       <section class="weather-summary">
         <div class="weather-brief" id="yesterdayWeatherIcon">
-          <p>Yesterday</p>
-          <div>
-            <span id="yesterdayHighestTemp"></span>
-            <span id="yesterdayLowestTemp"></span>
+          <p class="day-label">Yesterday</p>
+          <div class="icons-high-low">
+            <img
+              class="summary-icon"
+              id="weatherSummaryDayIcon"
+              src=""
+              alt="Day Icon"
+            />
+            <img
+              class="summary-icon"
+              id="weatherSummaryNightIcon"
+              src=""
+              alt="Night Icon"
+            />
+            <span class="high-low" id="yesterdayHighestTemp"></span>
+            <span class="high-low" id="yesterdayLowestTemp"></span>
           </div>
         </div>
 
         <div class="weather-brief" id="weatherSummaryDay0">
-          <p>Today</p>
-          <div>
-            <span id="weatherSummaryHighestTemp0"></span>
-            <span id="weatherSummaryLowestTemp0"></span>
+          <p class="day-label">Today</p>
+          <div class="icons-high-low">
+            <img
+              class="summary-icon"
+              id="weatherSummaryDayIcon0"
+              src=""
+              alt="Day Icon"
+            />
+            <img
+              class="summary-icon"
+              id="weatherSummaryNightIcon0"
+              src=""
+              alt="Night Icon"
+            />
+            <span class="high-low" id="weatherSummaryHighestTemp0"></span>
+            <span class="high-low" id="weatherSummaryLowestTemp0"></span>
           </div>
         </div>
 
         <div class="weather-brief" id="weatherSummaryDay1">
-          <p id="weatherSummaryDay1Label"></p>
-          <div>
-            <span id="weatherSummaryHighestTemp1"></span>
-            <span id="weatherSummaryLowestTemp1"></span>
+          <p class="day-label" id="weatherSummaryDay1Label"></p>
+          <div class="icons-high-low">
+            <img
+              class="summary-icon"
+              id="weatherSummaryDayIcon1"
+              src=""
+              alt="Day Icon"
+            />
+            <img
+              class="summary-icon"
+              id="weatherSummaryNightIcon1"
+              src=""
+              alt="Night Icon"
+            />
+            <span class="high-low" id="weatherSummaryHighestTemp1"></span>
+            <span class="high-low" id="weatherSummaryLowestTemp1"></span>
           </div>
         </div>
 
         <div class="weather-brief" id="weatherSummaryDay2">
-          <p id="weatherSummaryDay2Label"></p>
-          <div>
-            <span id="weatherSummaryHighestTemp2"></span>
-            <span id="weatherSummaryLowestTemp2"></span>
+          <p class="day-label" id="weatherSummaryDay2Label"></p>
+          <div class="icons-high-low">
+            <img
+              class="summary-icon"
+              id="weatherSummaryDayIcon2"
+              src=""
+              alt="Day Icon"
+            />
+            <img
+              class="summary-icon"
+              id="weatherSummaryNightIcon2"
+              src=""
+              alt="Night Icon"
+            />
+            <span class="high-low" id="weatherSummaryHighestTemp2"></span>
+            <span class="high-low" id="weatherSummaryLowestTemp2"></span>
           </div>
         </div>
       </section>
@@ -223,6 +280,7 @@
         />
       </a>
     </footer>
+    <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
     <script type="module" src="js/script.js"></script>
   </body>
 </html>

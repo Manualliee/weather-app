@@ -18,8 +18,18 @@ export function getDayOfWeek(dateString) {
 
 export function formatMonthDay(dateStr) {
   const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const [year, month, day] = dateStr.split("-");
   return `${months[parseInt(month, 10) - 1]} ${parseInt(day, 10)}`;
@@ -41,11 +51,11 @@ export function getAllDaysHours(data, numDays = 3) {
   }
 
   data.forecast.forecastday.forEach((day, i) => {
-    const dayName = getDayOfWeek(day.date); // e.g., "Mon", "Tue", etc.
+    const dayName = getDayOfWeek(day.date);
     const highest = Math.round(day.day.maxtemp_f);
     const lowest = Math.round(day.day.mintemp_f);
 
-    // Set the day label (ie "Mon", "Tue", etc.)
+    // Set the day label
     const labelEl = document.getElementById(`weatherSummaryDay${i}Label`);
     if (labelEl) labelEl.textContent = dayName;
 
@@ -54,6 +64,19 @@ export function getAllDaysHours(data, numDays = 3) {
     const lowEl = document.getElementById(`weatherSummaryLowestTemp${i}`);
     if (highEl) highEl.textContent = `${highest}°`;
     if (lowEl) lowEl.textContent = `${lowest}°`;
+
+    // --- Set the day icon ---
+    const dayIconEl = document.getElementById(`weatherSummaryDayIcon${i}`);
+    if (dayIconEl) dayIconEl.src = "https:" + day.day.condition.icon;
+
+    // --- Set the night icon (use hour 0 or a late hour as night) ---
+    const nightHour =
+      day.hour.find((h) => {
+        const hour = parseInt(h.time.split(" ")[1].split(":")[0]);
+        return hour === 0 || hour === 21 || hour === 22 || hour === 23;
+      }) || day.hour[0];
+    const nightIconEl = document.getElementById(`weatherSummaryNightIcon${i}`);
+    if (nightIconEl && nightHour) nightIconEl.src = "https:" + nightHour.condition.icon;
   });
   return { allHours, sunTimes };
 }
@@ -80,24 +103,21 @@ export function getDewPointDescription(dewPointF) {
   return "Oppressive";
 }
 
-export function getCondensedAlertDescription(desc) {
-  // Regex to match ALL CAPS headers like HAZARD..., IMPACT..., etc.
-  const headerPattern = /^[A-Z\s]+\.{3}/;
+export function formatAlertDateTime(dateTimeStr) {
+  const dateObj = new Date(dateTimeStr);
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const dayOfWeek = days[dateObj.getDay()];
+  const month = months[dateObj.getMonth()];
+  const day = dateObj.getDate();
 
-  // Prefer first *-line that is not a header
-  const lines = desc.split('\n').map(line => line.trim());
-  const bullet = lines.find(line => line.startsWith('*') && !headerPattern.test(line.replace(/^\*\s*/, '')));
-  if (bullet) {
-    return bullet.replace(/^\*\s*/, '');
-  }
+  let hour = dateObj.getHours();
+  const minute = dateObj.getMinutes().toString().padStart(2, "0");
+  const ampm = hour >= 12 ? "PM" : "AM";
+  hour = hour % 12 || 12;
 
-  // Otherwise, find the first non-header sentence
-  const sentences = desc.split(/(?<=\.)\s+/);
-  const firstUseful = sentences.find(s => !headerPattern.test(s.trim()));
-  if (firstUseful) {
-    return firstUseful.trim();
-  }
-
-  // Fallback: just return the first line
-  return lines[0] || desc;
+  return `${dayOfWeek}, ${month} ${day} at ${hour}:${minute} ${ampm}`;
 }
