@@ -30,7 +30,7 @@ body {
 }
 
 body.morning {
-  background: linear-gradient(180deg, #dabd7b 0%, #f7978d 50%, #948eeb 100%);
+  background: linear-gradient(180deg, #dabd7b 0%, #f7978d 50%, #7f7aca 100%);
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
@@ -42,7 +42,12 @@ body.afternoon {
   background-size: cover;
 }
 body.evening {
-  background: linear-gradient(180deg, #fbc2eb 0%, #a6c1ee 100%);
+  background: linear-gradient(
+    180deg,
+    #ffb347 0%,
+    #ff7e5f 50%,
+    #8b76bb 100%
+  );
   background-attachment: fixed;
   background-repeat: no-repeat;
   background-size: cover;
@@ -93,7 +98,6 @@ ul {
   flex-direction: row;
   justify-content: space-between;
 }
-
 
 .current-weather-info > .location-row {
   padding: 1rem 0;
@@ -250,7 +254,7 @@ ul::-webkit-scrollbar {
 #alertsContainer > button {
   background: none;
   border: none;
-  color: rgba(216, 213, 213, 0.582);
+  color: rgba(255, 255, 255, 0.712);
   cursor: pointer;
   font-size: 1rem;
   padding: 0;
@@ -272,7 +276,8 @@ ul::-webkit-scrollbar {
   gap: 8px;
 }
 
-.day-label, .high-low {
+.day-label,
+.high-low {
   font-size: 1.25rem;
 }
 

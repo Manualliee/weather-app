@@ -27,7 +27,10 @@ document.addEventListener("DOMContentLoaded", async () => {
       const isCloudy =
         conditionText === "cloudy" ||
         conditionText === "overcast" ||
-        conditionText === "mostly cloudy";
+        conditionText === "mostly cloudy" ||
+        conditionText === "light rain" ||
+        conditionText === "drizzle" ||
+        conditionText === "rain";
 
       if (isCloudy) {
         currentLocationLi.classList.add("cloudy");
@@ -64,6 +67,14 @@ document.addEventListener("DOMContentLoaded", async () => {
       let hour = parseInt(hourStr, 10);
       let ampm = hour >= 12 ? "PM" : "AM";
       let hour12 = hour % 12 || 12;
+
+      // Remove any previous time-of-day classes from currentLocationLi
+      currentLocationLi.classList.remove(
+        "morning",
+        "afternoon",
+        "evening",
+        "night"
+      );
 
       let timeOfDayClass = "";
       if (hour >= 5 && hour < 12) {
@@ -131,7 +142,10 @@ document.addEventListener("DOMContentLoaded", async () => {
         const isCloudy =
           conditionText === "cloudy" ||
           conditionText === "overcast" ||
-          conditionText === "mostly cloudy";
+          conditionText === "mostly cloudy" ||
+          conditionText === "light rain" ||
+          conditionText === "drizzle" ||
+          conditionText === "rain";
 
         if (isCloudy) {
           locationLi.classList.add("cloudy");
@@ -168,6 +182,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         let ampm = hour >= 12 ? "PM" : "AM";
         let hour12 = hour % 12 || 12;
 
+        locationLi.classList.remove("morning", "afternoon", "evening", "night");
         let timeOfDayClass = "";
         if (hour >= 5 && hour < 12) {
           timeOfDayClass = "morning";
