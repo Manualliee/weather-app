@@ -1,11 +1,10 @@
-import { fetchCitySuggestions } from "./weatherApi.js";
-import { fetchWeatherByCoords } from "./weatherApi.js";
+import { fetchCitySuggestions, fetchWeatherByCoords } from "./weatherApi.js";
+import { getDayOfWeek, formatMonthDay } from "./dataHelpers.js";
 
 // Search for city weather
 document.getElementById("searchInput").addEventListener("input", function (e) {
   const city = e.target.value.trim();
   if (!city) {
-    // If the input is empty, clear the search results
     document.getElementById("suggestionsContainer").innerHTML = "";
     document.getElementById("suggestionsContainer").style.display = "none";
     return;
@@ -51,19 +50,30 @@ document.getElementById("searchInput").addEventListener("input", function (e) {
             .then((data) => {
               const popupContent = `
                 <div class="weather-popup-card">
-                  <strong>${data.location.name}, ${data.location.region}, ${
-                data.location.country
-              }</strong><br>
-                  <img src="${data.current.condition.icon}" alt="${
-                data.current.condition.text
-              }" />
-                  <div>
-                    <span class="popup-temp">${Math.round(
-                      data.current.temp_f
-                    )}°F</span>,
-                    <span class="popup-condition">${
-                      data.current.condition.text
-                    }</span>
+                  <div class="location-weather">
+                    <div class="popup-location-title">
+                      <span class="popup-location-name">${
+                        data.location.name
+                      }</span>
+                      <span class="popup-location-region-country">${
+                        data.location.region
+                      }, ${data.location.country}</span>
+                      <span class="popup-location-date">
+                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(localTime[0])} at ${hour12}:${minuteStr} ${ampm}
+                      </span>
+                    </div>
+                    <div class="popup-location-weather">
+                      <div class="popup-location-icon-temp">
+                        <img src="${data.current.condition.icon}" alt="${
+                            data.current.condition.text}" />
+                            <span class="popup-temp">${Math.round(
+                            data.current.temp_f
+                          )}°F</span>
+                      </div>
+                      <span class="popup-condition">${
+                        data.current.condition.text
+                      }</span>
+                    </div>
                   </div>
                   <div class="popup-links">
                     <a href="index.html?lat=${lat}&lon=${lon}">Details</a>
@@ -163,18 +173,46 @@ map.on("click", function (e) {
 
   fetchWeatherByCoords(lat, lon, "imperial")
     .then((data) => {
+      let localTime = data.location.localtime.split(" ");
+      let [hourStr, minuteStr] = localTime[1].split(":"); // ["HH", "MM"]
+      let hour = parseInt(hourStr, 10);
+      let ampm = hour >= 12 ? "PM" : "AM";
+      let hour12 = hour % 12 || 12;
+
       map.setView([lat, lon], 12); // Set zoom level to city
       const popupContent = `
-      <strong>${data.location.name}, ${data.location.region}, ${
-        data.location.country
-      }</strong><br>
-      <img src="${data.current.condition.icon}" alt="${
-        data.current.condition.text
-      }" />
-      ${Math.round(data.current.temp_f)}°F, ${data.current.condition.text}
-      <a href="index.html?lat=${lat}&lon=${lon}">Details</a>
-      <a href="saved-locations.html" id="add-location-link">Add</a>
-    `;
+                <div class="weather-popup-card">
+                  <div class="location-weather">
+                    <div class="popup-location-title">
+                      <span class="popup-location-name">${
+                        data.location.name
+                      }</span>
+                      <span class="popup-location-region-country">${
+                        data.location.region
+                      }, ${data.location.country}</span>
+                      <span class="popup-location-date">
+                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(localTime[0])} at ${hour12}:${minuteStr} ${ampm}
+                      </span>
+                    </div>
+                    <div class="popup-location-weather">
+                      <div class="popup-location-icon-temp">
+                        <img src="${data.current.condition.icon}" alt="${
+                            data.current.condition.text}" />
+                            <span class="popup-temp">${Math.round(
+                            data.current.temp_f
+                          )}°F</span>
+                      </div>
+                      <span class="popup-condition">${
+                        data.current.condition.text
+                      }</span>
+                    </div>
+                  </div>
+                  <div class="popup-links">
+                    <a href="index.html?lat=${lat}&lon=${lon}">Details</a>
+                    <a href="saved-locations.html" id="add-location-link">Add</a>
+                  </div>
+                </div>
+              `;
       L.popup().setLatLng([lat, lon]).setContent(popupContent).openOn(map);
 
       setTimeout(() => {

@@ -207,7 +207,7 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
     .then((data) => {
       function getLottiePathForCondition(conditionText, hour) {
         const condition = conditionText.toLowerCase();
-        const isNight = hour < 6 || hour >= 20;
+        const isNight = hour < 5 || hour >= 20;
 
         if (condition.includes("sunny") || condition.includes("clear"))
           return isNight
@@ -222,6 +222,12 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
             : "./assets/lottie/Weather-partly-cloudy.json";
         if (condition.includes("cloudy") || condition.includes("overcast"))
           return "./assets/lottie/Weather-windy.json";
+
+        // Patchy light rain with thunder
+        if (condition.includes("patchy light rain with thunder")) {
+          return "./assets/lottie/Weather-storm&showers(day).json";
+        }
+
         // Thunder with rain
         if (
           (condition.includes("thunder") || condition.includes("storm")) &&
