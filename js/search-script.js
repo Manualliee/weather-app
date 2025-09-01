@@ -48,6 +48,20 @@ document.getElementById("searchInput").addEventListener("input", function (e) {
 
           fetchWeatherByCoords(lat, lon, "imperial")
             .then((data) => {
+              let savedLocations =
+                JSON.parse(localStorage.getItem("savedLocations")) || [];
+              const alreadySaved = savedLocations.some(
+                (loc) =>
+                  Number(loc.lat).toFixed(4) === Number(data.location.lat).toFixed(4) &&
+                  Number(loc.lon).toFixed(4) === Number(data.location.lon).toFixed(4)
+              );
+
+              let localTime = data.location.localtime.split(" ");
+              let [hourStr, minuteStr] = localTime[1].split(":"); // ["HH", "MM"]
+              let hour = parseInt(hourStr, 10);
+              let ampm = hour >= 12 ? "PM" : "AM";
+              let hour12 = hour % 12 || 12;
+
               const popupContent = `
                 <div class="weather-popup-card">
                   <div class="location-weather">
@@ -59,16 +73,19 @@ document.getElementById("searchInput").addEventListener("input", function (e) {
                         data.location.region
                       }, ${data.location.country}</span>
                       <span class="popup-location-date">
-                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(localTime[0])} at ${hour12}:${minuteStr} ${ampm}
+                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(
+                localTime[0]
+              )} at ${hour12}:${minuteStr} ${ampm}
                       </span>
                     </div>
                     <div class="popup-location-weather">
                       <div class="popup-location-icon-temp">
                         <img src="${data.current.condition.icon}" alt="${
-                            data.current.condition.text}" />
+                data.current.condition.text
+              }" />
                             <span class="popup-temp">${Math.round(
-                            data.current.temp_f
-                          )}°F</span>
+                              data.current.temp_f
+                            )}°F</span>
                       </div>
                       <span class="popup-condition">${
                         data.current.condition.text
@@ -77,7 +94,11 @@ document.getElementById("searchInput").addEventListener("input", function (e) {
                   </div>
                   <div class="popup-links">
                     <a href="index.html?lat=${lat}&lon=${lon}">Details</a>
-                    <a href="saved-locations.html" id="add-location-link">Add</a>
+                    ${
+                      alreadySaved
+                        ? ` `
+                        : `<a href="saved-locations.html" id="add-location-link">Add</a>`
+                    }
                   </div>
                 </div>
               `;
@@ -106,8 +127,8 @@ document.getElementById("searchInput").addEventListener("input", function (e) {
                     if (
                       !savedLocations.some(
                         (loc) =>
-                          loc.lat === mapLocationToSave.lat &&
-                          loc.lon === mapLocationToSave.lon
+                          Number(loc.lat).toFixed(4) === Number(mapLocationToSave.lat).toFixed(4) &&
+                          Number(loc.lon).toFixed(4) === Number(mapLocationToSave.lon).toFixed(4)
                       )
                     ) {
                       savedLocations.push(mapLocationToSave);
@@ -180,6 +201,14 @@ map.on("click", function (e) {
       let hour12 = hour % 12 || 12;
 
       map.setView([lat, lon], 12); // Set zoom level to city
+
+      let savedLocations =
+        JSON.parse(localStorage.getItem("savedLocations")) || [];
+      const alreadySaved = savedLocations.some(
+        (loc) =>
+          Number(loc.lat).toFixed(4) === Number(data.location.lat).toFixed(4) &&
+          Number(loc.lon).toFixed(4) === Number(data.location.lon).toFixed(4)
+      );
       const popupContent = `
                 <div class="weather-popup-card">
                   <div class="location-weather">
@@ -191,16 +220,19 @@ map.on("click", function (e) {
                         data.location.region
                       }, ${data.location.country}</span>
                       <span class="popup-location-date">
-                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(localTime[0])} at ${hour12}:${minuteStr} ${ampm}
+                        ${getDayOfWeek(localTime[0])}, ${formatMonthDay(
+        localTime[0]
+      )} at ${hour12}:${minuteStr} ${ampm}
                       </span>
                     </div>
                     <div class="popup-location-weather">
                       <div class="popup-location-icon-temp">
                         <img src="${data.current.condition.icon}" alt="${
-                            data.current.condition.text}" />
+        data.current.condition.text
+      }" />
                             <span class="popup-temp">${Math.round(
-                            data.current.temp_f
-                          )}°F</span>
+                              data.current.temp_f
+                            )}°F</span>
                       </div>
                       <span class="popup-condition">${
                         data.current.condition.text
@@ -209,7 +241,11 @@ map.on("click", function (e) {
                   </div>
                   <div class="popup-links">
                     <a href="index.html?lat=${lat}&lon=${lon}">Details</a>
-                    <a href="saved-locations.html" id="add-location-link">Add</a>
+                    ${
+                      alreadySaved
+                        ? ` `
+                        : `<a href="saved-locations.html" id="add-location-link">Add</a>`
+                    }
                   </div>
                 </div>
               `;
@@ -234,8 +270,8 @@ map.on("click", function (e) {
             if (
               !savedLocations.some(
                 (loc) =>
-                  loc.lat === mapLocationToSave.lat &&
-                  loc.lon === mapLocationToSave.lon
+                  Number(loc.lat).toFixed(4) === Number(mapLocationToSave.lat).toFixed(4) &&
+                  Number(loc.lon).toFixed(4) === Number(mapLocationToSave.lon).toFixed(4)
               )
             ) {
               savedLocations.push(mapLocationToSave);

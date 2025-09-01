@@ -304,7 +304,10 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
         conditionText === "drizzle" ||
         conditionText === "fog" ||
         conditionText === "mist" ||
-        conditionText === "light rain shower";
+        conditionText === "light rain shower" ||
+        conditionText === "thunderstorm" ||
+        conditionText === "moderate rain" ||
+        conditionText === "moderate or heavy rain shower";
 
       // For main UI:
       if (isCloudy) {
@@ -452,4 +455,27 @@ function handleGeolocationSuccess(position) {
   const longitude = position.coords.longitude;
 
   updateWeatherUI(latitude, longitude);
+
+  fetchWeatherByCoords(latitude, longitude, "imperial").then((data) => {
+    const mapLocationToSave = {
+      name: data.location.name,
+      region: data.location.region,
+      country: data.location.country,
+      lat: data.location.lat,
+      lon: data.location.lon,
+    };
+
+    let savedLocations =
+      JSON.parse(localStorage.getItem("savedLocations")) || [];
+    if (
+      !savedLocations.some(
+        (loc) =>
+          Number(loc.lat) === Number(mapLocationToSave.lat) &&
+          Number(loc.lon) === Number(mapLocationToSave.lon)
+      )
+    ) {
+      savedLocations.push(mapLocationToSave);
+      localStorage.setItem("savedLocations", JSON.stringify(savedLocations));
+    }
+  });
 }

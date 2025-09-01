@@ -2,6 +2,24 @@ body {
   background: black;
 }
 
+#add-current-location-btn {
+  width: 80%;
+  height: 80px;
+  margin-top: 30px;
+  padding-left: 70px;
+  background: rgb(41, 41, 41);
+  border: none;
+  border-radius: 20px;
+  font-size: 1.25rem;
+  text-align: start;
+  color: white;
+}
+
+#add-current-location-btn:hover {
+  background: rgb(51, 51, 51);
+  cursor: pointer;
+}
+
 #savedLocationsList {
   width: 100%;
   display: flex;
@@ -22,6 +40,10 @@ body {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+}
+
+li:hover {
+  cursor: pointer;
 }
 
 li.morning {
@@ -101,4 +123,8 @@ li.cloudy {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.delete-btn:hover {
+  color: rgb(200, 200, 200);
 }
