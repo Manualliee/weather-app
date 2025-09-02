@@ -71,11 +71,23 @@ li.cloudy {
   display: flex;
   flex-direction: column;
   align-items: start;
+}
 
-  h3 {
-    font-weight: bold;
-    font-size: 1.5rem;
-  }
+.current-location-badge-span {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
+.current-location-badge-span h3 {
+  font-weight: bold;
+  font-size: 1.5rem;
+}
+
+.current-location-badge-span .current-location-badge {
+  width: 25px;
+  height: 25px;
 }
 
 .region-country,
@@ -127,4 +139,92 @@ li.cloudy {
 
 .delete-btn:hover {
   color: rgb(200, 200, 200);
+}
+
+@media (max-width: 900px) {
+  #add-current-location-btn,
+  #savedLocationsList li {
+    width: 80%;
+    padding: 40px;
+    font-size: 1rem;
+  }
+  #add-current-location-btn {
+    height: 60px;
+    font-size: 1rem;
+    padding-left: 30px;
+  }
+}
+
+@media (max-width: 600px) {
+  #savedLocationsList {
+    padding: 30px 0;
+  }
+
+  #add-current-location-btn,
+  #savedLocationsList li {
+    width: 80%;
+    padding: 15px;
+    margin: 10px 0;
+    font-size: 0.95rem;
+  }
+  #add-current-location-btn {
+    height: 48px;
+    font-size: 0.95rem;
+    padding-left: 15px;
+    border-radius: 12px;
+  }
+  #savedLocationsList li {
+    border-radius: 18px;
+    flex-direction: row;
+    height: 50px;
+    min-height: 120px;
+  }
+  .weather-info {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .location-info .current-location-badge-span {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .current-location-badge-span img {
+    width: 18px;
+    height: 18px;
+  }
+
+  .location-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .region-country,
+  .date-time {
+    font-size: 10px;
+    color: rgba(254, 255, 255, 0.808);
+  }
+
+  .current-icon-temp img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .current-icon-temp .current-temp {
+    font-size: 1.2rem;
+  }
+
+  .high-low-temp {
+    font-size: 0.95rem;
+  }
+
+  .delete-btn {
+    top: 5px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
 }

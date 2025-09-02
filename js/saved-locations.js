@@ -171,19 +171,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         )} at ${hour12}:${minuteStr} ${ampm}`;
         dateTimeSpan.className = "date-time";
 
-        infoDiv.appendChild(nameH3);
-        infoDiv.appendChild(regionCountrySpan);
-        infoDiv.appendChild(document.createElement("br"));
-        infoDiv.appendChild(dateTimeSpan);
+        const currentLocationBadgeSpan = document.createElement("span");
+        currentLocationBadgeSpan.className = "current-location-badge-span";
 
         // Badge for current location
         if (location.isCurrent) {
-          const badge = document.createElement("span");
-          badge.textContent = "Current Location";
+          const badge = document.createElement("img");
+          badge.src = "assets/location-pin-svgrepo-com.svg"; // Update with the actual path to the icon
+          badge.alt = "Current Location";
           badge.className = "current-location-badge";
-          infoDiv.appendChild(document.createElement("br"));
-          infoDiv.appendChild(badge);
+          currentLocationBadgeSpan.appendChild(badge);
         }
+
+        currentLocationBadgeSpan.appendChild(nameH3);
+
+        infoDiv.appendChild(currentLocationBadgeSpan);
+        infoDiv.appendChild(regionCountrySpan);
+        infoDiv.appendChild(document.createElement("br"));
+        infoDiv.appendChild(dateTimeSpan);
 
         // --- Build weatherDiv ---
         weatherDiv.appendChild(currentIconTempDiv);
