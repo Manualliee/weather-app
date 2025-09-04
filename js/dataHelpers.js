@@ -97,10 +97,20 @@ export function getHumidityDescription(humidity) {
 }
 
 export function getDewPointDescription(dewPointF) {
-  if (dewPointF < 50) return "Comfortable";
-  if (dewPointF < 60) return "Noticeable";
-  if (dewPointF < 70) return "Sticky";
-  return "Oppressive";
+  if (dewPointF < 50) return "Dry and comfortable";
+  if (dewPointF < 55) return "Pleasant";
+  if (dewPointF < 60) return "A bit humid";
+  if (dewPointF < 65) return "Sticky";
+  if (dewPointF < 70) return "Very sticky";
+  return "Oppressive, muggy";
+}
+
+export function getVisibilityDescription(vis_miles) {
+  if (vis_miles >= 10) return "Excellent";
+  if (vis_miles >= 6) return "Good";
+  if (vis_miles >= 3) return "Moderate";
+  if (vis_miles >= 1) return "Poor";
+  return "Very Poor";
 }
 
 export function formatAlertDateTime(dateTimeStr) {

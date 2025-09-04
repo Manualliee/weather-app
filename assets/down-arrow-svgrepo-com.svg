@@ -1,9 +1,10 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Transformed by: SVG Repo Mixer Tools -->
-<svg fill="#fff" width="800px" height="800px" viewBox="0 0 24 24" id="down-arrow" xmlns="http://www.w3.org/2000/svg" class="icon line" stroke="#fff">
+<svg fill="#ffffff" width="800px" height="800px" viewBox="0 0 24 24" id="down-arrow" data-name="Flat Line" xmlns="http://www.w3.org/2000/svg" class="icon flat-line" stroke="#ffffff">
 <g id="SVGRepo_bgCarrier" stroke-width="0"/>
 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/>
 <g id="SVGRepo_iconCarrier">
-<path id="primary" d="M12,3V21M9,18l3,3,3-3" style="fill: none; stroke: #fff; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5;"/>
+<line id="primary" x1="12" y1="3" x2="12" y2="21" style="fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width:1.44;"/>
+<polyline id="primary-2" data-name="primary" points="9 18 12 21 15 18" style="fill: none; stroke: #ffffff; stroke-linecap: round; stroke-linejoin: round; stroke-width:1.44;"/>
 </g>
 </svg>

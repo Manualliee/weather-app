@@ -125,7 +125,7 @@ input:focus {
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .popup-temp {
@@ -137,7 +137,7 @@ input:focus {
 }
 
 .popup-links {
-  height: 40%;
+  height: 30%;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -163,4 +163,128 @@ input:focus {
 .leaflet-popup-close-button span {
   color: white;
   font-size: 1rem;
+}
+
+.leaflet-popup-tip {
+  background: #353535;
+}
+
+
+@media (max-width: 900px) {
+  #searchForm {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: stretch;
+  }
+  input {
+    width: 100%;
+    font-size: 1.2rem;
+    height: 44px;
+  }
+  #suggestionsContainer {
+    width: 95%;
+    padding: 24px;
+    border-radius: 30px;
+  }
+  #map {
+    min-height: 300px;
+    height: 350px;
+  }
+  .leaflet-popup-content-wrapper {
+    width: 450px;
+    height: 180px;
+  }
+
+  .popup-location-icon-temp > img {
+    width: 60px;
+    height: 60px;
+  }
+
+  .popup-temp {
+    font-size: 1.5rem;
+  }
+
+  .popup-condition {
+    font-size: 1.25rem;
+  }
+
+  .leaflet-popup-close-button span {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 600px) {
+  #searchForm {
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: stretch;
+    margin-top: 1rem;
+  }
+
+  .back-arrow {
+    width: 20px;
+    height: 20px;
+  }
+
+  input {
+    width: 100%;
+    font-size: 1rem;
+    height: 38px;
+    padding: 0.3rem;
+  }
+
+  #suggestionsContainer {
+    width: 100%;
+    padding: 12px;
+    border-radius: 18px;
+    gap: 18px;
+  }
+
+  #map {
+    flex: 1 1 auto;
+    min-height: 180px;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-bottom: 40px;
+  }
+
+  .leaflet-popup-content-wrapper {
+    width: 300px;
+    height: 150px;
+    border-radius: 12px;
+  }
+
+  .leaflet-popup-content {
+    padding: 8px 10px !important;
+  }
+
+  .popup-location-name {
+    font-size: 1.25rem;
+  }
+
+  .popup-location-region-country, .popup-location-date {
+    font-size: 12px;
+  }
+
+  .popup-location-icon-temp > img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .popup-temp {
+    font-size: 1.15rem;
+  }
+
+  .popup-condition {
+    font-size: 1rem;
+  }
+
+  .popup-links {
+    gap: 18px;
+    font-size: 1.25rem;
+  }
+
+  .leaflet-popup-close-button span {
+    font-size: 15px;
+  }
 }

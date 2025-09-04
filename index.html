@@ -49,10 +49,7 @@
         </div>
 
         <div class="current-icon">
-          <div
-            id="lottieWeatherIcon"
-            style="width: 250px; height: 250px; margin: 0 auto"
-          ></div>
+          <div id="lottieWeatherIcon"></div>
         </div>
       </section>
 
@@ -252,12 +249,15 @@
         </div>
 
         <div class="detail-container">
-          <div class="detail-title">
-            <img
-              src="./assets/visibility-svgrepo-com.svg"
-              alt="Visibility Icon"
-            />
-            <h3>Visibility</h3>
+          <div class="detail-header">
+            <div class="detail-title">
+              <img
+                src="./assets/visibility-svgrepo-com.svg"
+                alt="Visibility Icon"
+              />
+              <h3>Visibility</h3>
+            </div>
+            <span id="visibilityDescription"></span>
           </div>
           <span class="detail-ui" id="visibility"></span>
         </div>
@@ -282,5 +282,6 @@
     </footer>
     <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
     <script type="module" src="js/script.js"></script>
+    <script src="js/ui-effects.js"></script>
   </body>
 </html>

@@ -5,6 +5,7 @@ import {
   getHumidityDescription,
   getDewPointDescription,
   formatAlertDateTime,
+  getVisibilityDescription,
 } from "./dataHelpers.js";
 import {
   fetchWeatherByCoords,
@@ -116,8 +117,16 @@ function updateWeatherUI(latitude, longitude) {
             )}<br>
             <strong>To:</strong> ${formatAlertDateTime(firstAlert.expires)}
           </p>
-          <p>${firstAlert.desc || ""}</p>
+          <button class="show-details-btn">Details</button>
+          <div class="alert-desc" style="display:none;">${firstAlert.desc}</div>
         `;
+
+        firstAlertDiv.querySelector(".show-details-btn").onclick = function () {
+          const desc = firstAlertDiv.querySelector(".alert-desc");
+          desc.style.margin = "10px 0";
+          desc.style.cursor = "pointer";
+          desc.style.display = desc.style.display === "none" ? "block" : "none";
+        };
         alertsContainer.appendChild(firstAlertDiv);
 
         // If more than one alert, add dropdown for the rest
@@ -142,8 +151,17 @@ function updateWeatherUI(latitude, longitude) {
                 )}<br>
                 <strong>To:</strong> ${formatAlertDateTime(alert.expires)}
               </p>
-              <p>${alert.desc || ""}</p>
+              <button class="show-details-btn">Details</button>
+              <div class="alert-desc" style="display:none;">${alert.desc}</div>
             `;
+
+            alertDiv.querySelector(".show-details-btn").onclick = function () {
+              const desc = alertDiv.querySelector(".alert-desc");
+              desc.style.margin = "10px 0";
+              desc.style.cursor = "pointer";
+              desc.style.display =
+                desc.style.display === "none" ? "block" : "none";
+            };
             dropdownDiv.appendChild(alertDiv);
           }
 
@@ -356,6 +374,8 @@ function fetchAndDisplayCurrentWeather(latitude, longitude) {
       document.getElementById("pressureGaugeLabel").textContent =
         pressureValue.toFixed(2) + " in";
 
+      document.getElementById("visibilityDescription").textContent =
+        getVisibilityDescription(data.current.vis_miles);
       visibility.innerHTML = `${data.current.vis_miles} mi`;
 
       const localHour = parseInt(
@@ -386,6 +406,9 @@ function displayHourlyForecast(nextHours, sunTimes) {
     const sunSetIcon = document.createElement("img");
     const iconElement = document.createElement("img");
     const hourlyPrecipitation = document.createElement("span");
+    hourlyPrecipitation.classList.add("hourly-precipitation");
+    const rainDrop = document.createElement("img");
+    const snowFlake = document.createElement("img");
 
     sunRiseIcon.src = "assets/sunrise-svgrepo-com.svg";
     sunRiseIcon.alt = "Sunrise icon";
@@ -393,6 +416,37 @@ function displayHourlyForecast(nextHours, sunTimes) {
     sunSetIcon.alt = "Sunset icon";
     iconElement.src = element.condition.icon;
     iconElement.alt = `${element.condition.text} icon`;
+    rainDrop.src = "assets/water-drop-svgrepo-com.svg";
+    rainDrop.alt = "Rain drop icon";
+    snowFlake.src = "assets/snow-flake-svgrepo-com.svg";
+    snowFlake.alt = "Snow flake icon";
+
+    let precipText = "";
+    let precipIcon = null;
+    if (
+      element.chance_of_snow !== undefined &&
+      element.chance_of_rain !== undefined
+    ) {
+      if (element.chance_of_snow > element.chance_of_rain) {
+        precipIcon = snowFlake.cloneNode(true);
+        precipText = `${element.chance_of_snow}%`;
+      } else {
+        precipIcon = rainDrop.cloneNode(true);
+        precipText = `${element.chance_of_rain}%`;
+      }
+    } else if (element.chance_of_snow !== undefined) {
+      precipIcon = snowFlake.cloneNode(true);
+      precipText = `${element.chance_of_snow}%`;
+    } else if (element.chance_of_rain !== undefined) {
+      precipIcon = rainDrop.cloneNode(true);
+      precipText = `${element.chance_of_rain}%`;
+    }
+    hourlyPrecipitation.innerHTML = "";
+    if (precipIcon) hourlyPrecipitation.appendChild(precipIcon);
+    if (precipText)
+      hourlyPrecipitation.appendChild(
+        document.createTextNode(" " + precipText)
+      );
 
     const rawHour = parseInt(element.time.split(" ")[1].split(":")[0]);
     setWeatherBackground(rawHour);
@@ -425,7 +479,8 @@ function displayHourlyForecast(nextHours, sunTimes) {
     const listItem = document.createElement("li");
     listItem.innerHTML = `${displayHour} ${ampm} ${
       iconElement.outerHTML
-    } ${Math.round(element.temp_f)}° ${hourlyPrecipitation.outerHTML}`;
+    } ${Math.round(element.temp_f)}°`;
+    listItem.appendChild(hourlyPrecipitation);
     ulElement.appendChild(listItem);
 
     if (

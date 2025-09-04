@@ -53,12 +53,7 @@ li.afternoon {
   background: linear-gradient(135deg, #4795d4 0%, #4eabee 100%);
 }
 li.evening {
-  background: linear-gradient(
-    135deg,
-    #ffb347 0%,
-    #ff7e5f 50%,
-    #8b76bb 100%
-  );
+  background: linear-gradient(135deg, #3d4270 0%, #4c3b72 40%, #b46551 100%);
 }
 li.night {
   background: linear-gradient(135deg, #00284e 0%, #244069 100%);
