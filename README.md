@@ -46,7 +46,7 @@ A modern, responsive weather app that provides current conditions, hourly foreca
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/weather-app.git
+git clone https://github.com/Manualliee/weather-app.git
 cd weather-app
 ```
 
