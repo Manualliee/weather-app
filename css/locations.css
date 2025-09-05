@@ -166,6 +166,7 @@ li.cloudy {
     height: 48px;
     font-size: 0.95rem;
     padding-left: 15px;
+    margin-top: 30px;
     border-radius: 12px;
   }
   #savedLocationsList li {

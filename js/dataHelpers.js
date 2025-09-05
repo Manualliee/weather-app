@@ -31,7 +31,7 @@ export function formatMonthDay(dateStr) {
     "November",
     "December",
   ];
-  const [year, month, day] = dateStr.split("-");
+  const [, month, day] = dateStr.split("-");
   return `${months[parseInt(month, 10) - 1]} ${parseInt(day, 10)}`;
 }
 
